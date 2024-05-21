@@ -102,8 +102,9 @@ const cardStore = useCardStore();
       padding-top: 0;
       transition: top 0.15s ease-in-out;
       &.low {
-         height: calc(100% - 70%);
-         top: 70%;
+         $distance: 80%;
+         height: calc(100% - #{$distance});
+         top: $distance;
          background: rgba(0, 0, 0, 0.4);
       }
    }
