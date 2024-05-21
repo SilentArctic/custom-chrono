@@ -52,7 +52,7 @@ const handleDownload = async (fileType, close) => {
       ...(cardStore.cardType === CardTypes.AGENT ? ['card-1'] : []),
    ];
 
-   const cardsWrapperId = 'card-print-wrapper';;
+   const cardsWrapperId = 'card-print-wrapper';
    if (ids.length > 1) {
       ids.push(cardsWrapperId);
    }
