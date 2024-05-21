@@ -3,7 +3,7 @@
 
 <template>
    <div class="copyright">
-      <a href="https://silentarcticdev.github.com/customchrono" target="__blank">GitHub</a> |
+      <a href="https://github.com/SilentArctic/custom-chrono" target="__blank">GitHub</a> |
       &copy;2024 SilentArcticDev
    </div>
 </template>
