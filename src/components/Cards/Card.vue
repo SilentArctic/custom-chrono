@@ -20,6 +20,11 @@ const props = defineProps({
    durability: { type: Number },
 });
 
+const syndicateIcon = computed(() => {
+   if (!props.syndicate) return '';
+   return new URL(`../../assets/${props.syndicate}.webp`, import.meta.url);
+});
+
 const transformedDescription = computed(() =>
    transformDescription(props.description),
 );
@@ -52,7 +57,8 @@ const artStyle = computed(() => {
          <img src="../../assets/desc_box.webp" alt="description-image" title="description-image" />
 
          <div v-if="syndicate" class="syndicate">
-            <img :src="`src/assets/${syndicate}.webp`" />
+            <!-- <img :src="`../../assets/${syndicate}.webp`" /> -->
+            <img :src="syndicateIcon" />
          </div>
       </div>
 
