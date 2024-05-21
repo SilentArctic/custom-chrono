@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import * as CardTypes from '@/constants/cardTypes.constants';
-import transformDescription from '@/utils/transformDescription';
+import { transformDescription } from '@/utils';
 
 const props = defineProps({
    cardType: {

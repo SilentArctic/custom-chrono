@@ -5,7 +5,7 @@ import Share from './components/Share/Share.vue';
 import EditBar from './components/EditBar/EditBar.vue';
 import Cards from './components/Cards/Cards.vue';
 import Copyright from './components/Copyright.vue';
-import { useCardStore } from './stores/card';
+import { useCardStore } from './stores/card.store';
 
 const cardStore = useCardStore();
 

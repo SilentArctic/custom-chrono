@@ -1,6 +1,6 @@
 <script setup>
 import * as CardTypes from '@/constants/cardTypes.constants';
-import ArtSlider from './ArtSlider.vue';
+import EditBarArtSlider from './EditBarArtSlider.vue';
 
 const emit = defineEmits(['updateValue', 'updateArtPos']);
 
@@ -50,10 +50,10 @@ const handleRange = ({ target: { name, value } }) => {
          :value="card.artCredit"
          @input="handleValue"
       />
-      <ArtSlider label="x" :value="card.artPos.x" @handleRange="handleRange" />
-      <ArtSlider label="y" :value="card.artPos.y" @handleRange="handleRange" />
-      <ArtSlider label="z" :value="card.artPos.z" @handleRange="handleRange" />
-      <ArtSlider label="r" :value="card.artPos.r" @handleRange="handleRange" />
+      <EditBarArtSlider label="x" :value="card.artPos.x" @handleRange="handleRange" />
+      <EditBarArtSlider label="y" :value="card.artPos.y" @handleRange="handleRange" />
+      <EditBarArtSlider label="z" :value="card.artPos.z" @handleRange="handleRange" />
+      <EditBarArtSlider label="r" :value="card.artPos.r" @handleRange="handleRange" />
 
       <div class="row">
          <input

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import Card from './Card.vue';
-import { useCardStore } from '@/stores/card';
+import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
 
 const cardStore = useCardStore();

@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue';
-import { useCardStore } from '@/stores/card';
+import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
 import * as Syndicates from '@/constants/syndicates.constants';
-import CardStats from './CardStats.vue';
+import EditBarCardStats from './EditBarCardStats.vue';
 
 const isMobileLow = ref(true);
 const cardStore = useCardStore();
@@ -45,7 +45,7 @@ const cardStore = useCardStore();
 
       <hr />
 
-      <CardStats
+      <EditBarCardStats
          :cardType="cardStore.cardType"
          :card="cardStore.cards[0]"
          @updateValue="(name, val) => cardStore.setValue(0, name, val)"
@@ -54,7 +54,7 @@ const cardStore = useCardStore();
 
       <div v-if="cardStore.cardType === CardTypes.AGENT">
          <hr />
-         <CardStats
+         <EditBarCardStats
             :cardType="cardStore.cardType"
             :card="cardStore.cards[1]"
             @updateValue="(name, val) => cardStore.setValue(1, name, val)"

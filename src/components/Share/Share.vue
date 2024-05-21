@@ -4,15 +4,15 @@ import domToImage from 'dom-to-image';
 import map from 'lodash/map';
 import Popper from 'vue3-popper';
 import { useToast } from 'vue-toast-notification';
-import { useCardStore } from '@/stores/card';
+import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
-import HelpModal from './HelpModal.vue';
+import ShareHelpModal from './ShareHelpModal.vue';
 
 const $toast = useToast();
 const cardStore = useCardStore();
 
 const { open: openHelp, close: closeHelp } = useModal({
-   component: HelpModal,
+   component: ShareHelpModal,
    attrs: { onClose: () => closeHelp() },
 });
 
