@@ -24,21 +24,23 @@ const mobilePos = computed(() => {
       :style="mobilePos"
       @click="isMobileSecondCard = !isMobileSecondCard"
    >
-      <Card
-         id="card-0"
-         v-bind="cardStore.cards[0]"
-         :cardType="cardStore.cardType"
-         :syndicate="cardStore.syndicate"
-      />
+      <div id="card-print-wrapper" class="card-print-wrapper">
+         <Card
+            id="card-0"
+            v-bind="cardStore.cards[0]"
+            :cardType="cardStore.cardType"
+            :syndicate="cardStore.syndicate"
+         />
 
-      <div v-if="cardStore.cardType === CardTypes.AGENT" class="spacer" />
+         <div v-if="cardStore.cardType === CardTypes.AGENT" class="spacer" />
 
-      <Card v-if="cardStore.cardType === CardTypes.AGENT"
-         id="card-1"
-         v-bind="cardStore.cards[1]"
-         :cardType="cardStore.cardType"
-         :syndicate="cardStore.syndicate"
-      />
+         <Card v-if="cardStore.cardType === CardTypes.AGENT"
+            id="card-1"
+            v-bind="cardStore.cards[1]"
+            :cardType="cardStore.cardType"
+            :syndicate="cardStore.syndicate"
+         />
+      </div>
    </div>
 </template>
 
@@ -49,6 +51,12 @@ const mobilePos = computed(() => {
    display: flex;
    justify-content: center;
    align-items: center;
+   padding-left: 10px;
+
+   .card-print-wrapper {
+      width: 100%;
+      display: flex;
+   }
 
    .spacer {
       height: 100%;

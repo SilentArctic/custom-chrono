@@ -52,8 +52,9 @@ const handleDownload = async (fileType, close) => {
       ...(cardStore.cardType === CardTypes.AGENT ? ['card-1'] : []),
    ];
 
+   const cardsWrapperId = 'card-print-wrapper';
    if (ids.length > 1) {
-      ids.push('cards');
+      ids.push(cardsWrapperId);
    }
 
    for (const id of ids) {
@@ -61,14 +62,15 @@ const handleDownload = async (fileType, close) => {
       if (!node) return;
 
       const index = id.split('-')[1];
-      const fileName = id === 'cards'
+      const fileName = id === cardsWrapperId
          ? `${cardStore.cards[0].name}_${cardStore.cards[1].name}.${fileType}`
          : `${cardStore.cards[Number(index)].name}.${fileType}`;
 
       const dataUrl = await domToImage[downloadMethod](node, {
+         filter: node => !node.classList?.contains('spacer'),
          style: {
-            maxWidth: '100%',
-            width: '100%',
+            padding: '0',
+            overflow: 'hidden',
          },
       });
       const link = document.createElement('a');
