@@ -1,8 +1,5 @@
-<script setup>
-</script>
-
 <template>
-   <hr />
+   <hr v-bind="$attrs" />
 </template>
 
 <style lang="scss" scoped>
