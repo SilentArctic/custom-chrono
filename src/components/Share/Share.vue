@@ -65,17 +65,16 @@ const handleDownload = async (fileType, close) => {
          ? `${cardStore.cards[0].name}_${cardStore.cards[1].name}.${fileType}`
          : `${cardStore.cards[Number(index)].name}.${fileType}`;
 
-      console.log(node);
-      // const dataUrl = await domToImage[downloadMethod](node, {
-      //    style: {
-      //       maxWidth: '100%',
-      //       width: '100%',
-      //    },
-      // });
-      // const link = document.createElement('a');
-      // link.download = fileName;
-      // link.href = dataUrl;
-      // link.click();
+      const dataUrl = await domToImage[downloadMethod](node, {
+         style: {
+            maxWidth: '100%',
+            width: '100%',
+         },
+      });
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = dataUrl;
+      link.click();
    }
 };
 </script>
