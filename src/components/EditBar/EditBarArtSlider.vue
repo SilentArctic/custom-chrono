@@ -1,4 +1,6 @@
 <script setup>
+import { BaseInput } from '../common';
+
 const emit = defineEmits(['handleRange']);
 
 const props = defineProps({
@@ -22,7 +24,7 @@ const handleValueClick = () => {
 <template>
    <div class="img-slider">
       <span>{{ label }}</span>
-      <input
+      <BaseInput
          type="range"
          :value="value"
          :name="label"

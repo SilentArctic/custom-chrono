@@ -1,6 +1,7 @@
 <script setup>
 import * as CardTypes from '@/constants/cardTypes.constants';
 import EditBarArtSlider from './EditBarArtSlider.vue';
+import { BaseInput } from '../common';
 
 const emit = defineEmits(['updateValue', 'updateArtPos']);
 
@@ -28,7 +29,7 @@ const handleRange = ({ target: { name, value } }) => {
 
 <template>
    <div class="card-stats">
-      <input
+      <BaseInput
          name="name"
          placeholder="Name"
          autocomplete="off"
@@ -36,14 +37,14 @@ const handleRange = ({ target: { name, value } }) => {
          @input="handleValue"
       />
 
-      <input
+      <BaseInput
          name="art"
          placeholder="Image URL"
          autocomplete="off"
          :value="card.art"
          @input="handleValue"
       />
-      <input
+      <BaseInput
          name="artCredit"
          placeholder="Image Credit"
          autocomplete="off"
@@ -56,7 +57,7 @@ const handleRange = ({ target: { name, value } }) => {
       <EditBarArtSlider label="r" :value="card.artPos.r" @handleRange="handleRange" />
 
       <div class="row">
-         <input
+         <BaseInput
             type="number"
             name="cost"
             placeholder="Cost"
@@ -64,7 +65,7 @@ const handleRange = ({ target: { name, value } }) => {
             :value="card.cost"
             @input="handleNumValue"
          />
-         <input v-if="cardType === CardTypes.AGENT"
+         <BaseInput v-if="cardType === CardTypes.AGENT"
             type="number"
             name="strength"
             placeholder="Strength"
@@ -72,7 +73,7 @@ const handleRange = ({ target: { name, value } }) => {
             :value="card.strength"
             @input="handleNumValue"
          />
-         <input v-if="cardType === CardTypes.AGENT"
+         <BaseInput v-if="cardType === CardTypes.AGENT"
             type="number"
             name="durability"
             placeholder="Durability"
@@ -82,7 +83,7 @@ const handleRange = ({ target: { name, value } }) => {
          />
       </div>
 
-      <textarea
+      <BaseInput textarea
          name="description"
          placeholder="Description"
          rows="6"

@@ -1,6 +1,7 @@
 <script setup>
 import { VueFinalModal } from 'vue-final-modal';
 import transformDescription from '@/utils/transformDescription';
+import { BaseHr } from '../common';
 
 defineEmits(['close']);
 </script>
@@ -15,7 +16,7 @@ defineEmits(['close']);
       <article>
          <section>
             <h1 :style="{ margin: 0 }">Description Customizations</h1>
-            <hr />
+            <BaseHr />
             <p>Card descriptions often feature highlights and other text decoration to emphasize certain words. The following formats are allowed in a card's description.</p>
             <br />
             <p>
@@ -36,7 +37,7 @@ defineEmits(['close']);
 
          <section>
             <h1>Art Sliders</h1>
-            <hr />
+            <BaseHr />
             <p>Slide the sliders to adjust image position (x/y), zoom (z), and rotation (r).</p>
             <p>Click on the numerical value to reset to 0, or increase by 90 if the current value is a multiple of 90.</p>
             <img src="https://i.imgur.com/a3TnzZP.png" />
@@ -44,7 +45,7 @@ defineEmits(['close']);
 
          <section>
             <h1>Sharing</h1>
-            <hr />
+            <BaseHr />
             <p>There are two ways to share your new card: the Share button and the Download button, found at the top of your screen.</p>
             <img src="https://i.imgur.com/IBLQsHZ.png" />
 
@@ -60,7 +61,7 @@ defineEmits(['close']);
 
          <section>
             <h1>Mobile Devices</h1>
-            <hr />
+            <BaseHr />
             <p>Custom Chrono works best on desktop, but does include support for mobile devices. When working with an Agent card, tap on either card to view the non-focused card.</p>
          </section>
       </article>

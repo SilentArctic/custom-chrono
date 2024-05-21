@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
 import * as Syndicates from '@/constants/syndicates.constants';
+import { BaseHr, BaseSelect } from '../common';
 import EditBarCardStats from './EditBarCardStats.vue';
 
 const isMobileLow = ref(true);
@@ -15,7 +16,7 @@ const cardStore = useCardStore();
          <span :class="{ low: isMobileLow }">&#8249;</span>
       </div>
 
-      <select
+      <BaseSelect
          name="card-type"
          class="card-type"
          :value="cardStore.cardType"
@@ -27,9 +28,9 @@ const cardStore = useCardStore();
          >
             {{ cType }}
          </option>
-      </select>
+      </BaseSelect>
 
-      <select
+      <BaseSelect
          name="syndicate"
          :value="cardStore.syndicate"
          @input="cardStore.setSyndicate($event.target.value)"
@@ -41,9 +42,9 @@ const cardStore = useCardStore();
          >
             {{ syndicate }}
          </option>
-      </select>
+      </BaseSelect>
 
-      <hr />
+      <BaseHr />
 
       <EditBarCardStats
          :cardType="cardStore.cardType"
@@ -53,7 +54,7 @@ const cardStore = useCardStore();
       />
 
       <div v-if="cardStore.cardType === CardTypes.AGENT">
-         <hr />
+         <BaseHr />
          <EditBarCardStats
             :cardType="cardStore.cardType"
             :card="cardStore.cards[1]"
