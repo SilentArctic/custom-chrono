@@ -80,8 +80,9 @@ const artStyle = computed(() => {
 
 $card-border: 10px;
 .card {
-   width: 40%;
-   max-width: 450px;
+   width: 50%;
+   max-height: 100vh;
+   // max-width: 500px;
    aspect-ratio: 3/4;
    background: rgba(255, 255, 255, 0.03);
    border: 1px solid rgba(255, 255, 255, 0.1);
@@ -102,6 +103,10 @@ $card-border: 10px;
       }
    }
 
+   .card-image {
+      width: 100%;
+   }
+
    .power-cost {
       height: 13.33%;
       aspect-ratio: 1;
@@ -114,7 +119,7 @@ $card-border: 10px;
          top: 47%;
          left: 50%;
          transform: translate(-50%, -50%);
-         font-size: 2vw;
+         font-size: 2.5vw;
 
          @media screen and (min-width: 1600px) {
             font-size: 30px;
@@ -155,13 +160,14 @@ $card-border: 10px;
          position: absolute;
          top: 8%;
          left: 7%;
-         font-size: 1vw;
+         font-size: 1.25vw;
 
          @media screen and (min-width: 1600px) {
             font-size: 15px;
          }
          @media (max-width: $screen-sm) {
-            font-size: 4vw;
+            top: 8%;
+            font-size: 3vw;
          }
       }
 
@@ -178,13 +184,13 @@ $card-border: 10px;
          top: 0%;
          padding: 18% 10% 0 10%;
          text-align: center;
-         font-size: 1vw;
+         font-size: 1.2vw;
 
          @media screen and (min-width: 1600px) {
             font-size: 15px;
          }
          @media (max-width: $screen-sm) {
-            font-size: 4vw;
+            font-size: 2.5vw;
          }
 
          .highlight {
@@ -202,7 +208,7 @@ $card-border: 10px;
       .strength, .durability {
          position: absolute;
          bottom: 30%;
-         font-size: 2vw;
+         font-size: 2.5vw;
 
          @media screen and (min-width: 1600px) {
             font-size: 30px;
