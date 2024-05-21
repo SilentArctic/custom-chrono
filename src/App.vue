@@ -44,77 +44,6 @@ html {
    --popper-theme-padding: 10px;
    --popper-theme-box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
-
-input {
-   height: 34px;
-   margin-bottom: 10px;
-
-   &[type="range"] {
-      width: 100%;
-      -webkit-appearance: none;
-      background: transparent !important;
-      border: none;
-      box-shadow: none;
-      &::-ms-track {
-         width: 100%;
-         cursor: pointer;
-         background: transparent;
-         border-color: transparent;
-         color: transparent;
-      }
-      &::-webkit-slider-thumb {
-         background: green;
-         margin-top: -4px;
-      }
-      &::-webkit-slider-runnable-track {
-         width: 100%;
-         height: 8px;
-         cursor: pointer;
-         background: rgba(0, 0, 0, 0.25);
-         border-radius: 10px;
-         border: 0.2px solid rgba(255, 255, 255, 0.1);;
-      }
-   }
-}
-
-input, textarea {
-   width: 100%;
-   background-color: rgba(0, 0, 0, 0.25);
-   border: none;
-   border-bottom: 4px solid rgba(255, 255, 255, 0.1);
-   border-radius: 3px 3px 0 0;
-   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-   padding: 0.3rem 0.5rem;
-   color: white;
-}
-
-select {
-   height: 34px;
-   width: 100%;
-   background-color: rgba(0, 0, 0, 0.25);
-   border: none;
-   border-bottom: 4px solid rgba(255, 255, 255, 0.1);
-   border-radius: 3px 3px 0 0;
-   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-   padding: 0.3rem 0.5rem;
-   color: white;
-   text-transform: capitalize;
-   &:first-child { margin-bottom: 10px; }
-
-   option {
-      background: #0a1030;
-   }
-}
-
-input, textarea, select {
-   font-size: 0.9rem !important;
-}
-
-hr {
-   margin: 1rem 0;
-   border: 3px double rgba(#dec34f, 0.75);
-   border-radius: 10px;
-}
 </style>
 
 <style lang="scss" scoped>
@@ -138,10 +67,6 @@ hr {
       display: flex;
       padding: 10px;
       overflow: hidden;
-
-      @media (max-width: $screen-sm) {
-         // width: 190%;
-      }
    }
 }
 </style>

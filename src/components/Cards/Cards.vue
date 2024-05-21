@@ -6,9 +6,10 @@ import * as CardTypes from '@/constants/cardTypes.constants';
 
 const cardStore = useCardStore();
 
+/* slide Agent cards horizontally on mobile displays */
 const isMobileSecondCard = ref(false);
 const mobilePos = computed(() => {
-   if (screen.width > 750) return;
+   if (screen.width > 750 || cardStore.cardType !== CardTypes.AGENT) return;
    const translation = isMobileSecondCard.value ? -85 : 0;
    return { transform: `translateX(${translation}%)` };
 });
