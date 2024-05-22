@@ -5,7 +5,7 @@ const replacers = {
 };
 
 const styles = {
-   keyword: 'color: #dec34f',
+   keyword: 'color: #e1c341',
    italic: 'font-style: italic',
    bold: 'font-weight: 600',
 };

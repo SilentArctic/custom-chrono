@@ -48,11 +48,11 @@ const handleDownload = async (fileType, close) => {
       : fileType === 'png' && 'toPng';
 
    const ids = [
-      'card-0',
-      ...(cardStore.cardType === CardTypes.AGENT ? ['card-1'] : []),
+      'print-wrapper-0',
+      ...(cardStore.cardType === CardTypes.AGENT ? ['print-wrapper-1'] : []),
    ];
 
-   const cardsWrapperId = 'card-print-wrapper';
+   const cardsWrapperId = 'print-wrapper-all';
    if (ids.length > 1) {
       ids.push(cardsWrapperId);
    }
@@ -61,7 +61,7 @@ const handleDownload = async (fileType, close) => {
       const node = document.getElementById(id);
       if (!node) return;
 
-      const index = id.split('-')[1];
+      const index = id.split('-')[2];
       const fileName = id === cardsWrapperId
          ? `${cardStore.cards[0].name}_${cardStore.cards[1].name}.${fileType}`
          : `${cardStore.cards[Number(index)].name}.${fileType}`;
@@ -70,7 +70,7 @@ const handleDownload = async (fileType, close) => {
          filter: node => !node.classList?.contains('spacer'),
          style: {
             padding: '0',
-            overflow: 'hidden',
+            margin: '0',
          },
       });
       const link = document.createElement('a');

@@ -48,7 +48,6 @@ const artStyle = computed(() => {
       </div>
 
       <div class="desc_box">
-         <div class="name-shade" />
          <div class="desc-shade" />
 
          <div class="name">{{ name }}</div>
@@ -57,7 +56,6 @@ const artStyle = computed(() => {
          <img src="../../assets/desc_box.webp" alt="description-image" title="description-image" />
 
          <div v-if="syndicate" class="syndicate">
-            <!-- <img :src="`../../assets/${syndicate}.webp`" /> -->
             <img :src="syndicateIcon" />
          </div>
       </div>
@@ -80,9 +78,7 @@ const artStyle = computed(() => {
 
 $card-border: 10px;
 .card {
-   width: 50%;
    max-height: 100vh;
-   // max-width: 500px;
    aspect-ratio: 3/4;
    background: rgba(255, 255, 255, 0.03);
    border: 1px solid rgba(255, 255, 255, 0.1);
@@ -94,15 +90,6 @@ $card-border: 10px;
    font-family: "Noto Serif", serif;
    overflow: hidden;
 
-   @media (max-width: $screen-sm) {
-      width: 100%;
-      max-width: none;
-      min-width: 90%;
-      &:first-child:not(:last-child) {
-         margin-right: 20px;
-      }
-   }
-
    .card-image {
       width: 100%;
    }
@@ -113,6 +100,7 @@ $card-border: 10px;
       position: absolute;
       top: 2%;
       left: 2%;
+      text-shadow: 0 0 5px black;
 
       .cost {
          position: absolute;
@@ -137,23 +125,29 @@ $card-border: 10px;
 
       img { position: relative; }
 
-      .name-shade {
-         height: 9%;
-         width: 2.1%;
-         background: rgba(0, 0, 0, 0.8);
-         position: absolute;
-         left: 2.9%;
-         top: 7%;
-      }
-
       .desc-shade {
          height: 90%;
-         width: 90%;
-         background: rgba(0, 0, 0, 0.8);
+         width: 95%;
          position: absolute;
          top: 50%;
          left: 50%;
          transform: translate(-50%, -50%);
+         &:before {
+            background: rgba(#2b0c25, 0.5);
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.75);
+            content: '';
+            clip-path: polygon(
+               0% 0%,
+               100% 0%,
+               98% 0%,
+               98% 98%,
+               2.5% 98%,
+               2.5% 20%
+            );
+         }
       }
 
       .name {
@@ -161,6 +155,7 @@ $card-border: 10px;
          top: 8%;
          left: 7%;
          font-size: 1.25vw;
+         text-shadow: 0 0 5px black;
 
          @media screen and (min-width: 1600px) {
             font-size: 15px;
@@ -172,10 +167,10 @@ $card-border: 10px;
       }
 
       .syndicate {
-         width: 6.5%;
+         width: 6%;
          position: absolute;
-         top: 7%;
-         right: 6.5%;
+         top: 7.5%;
+         right: 7%;
       }
 
       .description {
@@ -185,6 +180,7 @@ $card-border: 10px;
          padding: 18% 10% 0 10%;
          text-align: center;
          font-size: 1.2vw;
+         text-shadow: 0 0 5px black;
 
          @media screen and (min-width: 1600px) {
             font-size: 15px;
@@ -209,6 +205,7 @@ $card-border: 10px;
          position: absolute;
          bottom: 30%;
          font-size: 2.5vw;
+         text-shadow: 0 0 5px black;
 
          @media screen and (min-width: 1600px) {
             font-size: 30px;
