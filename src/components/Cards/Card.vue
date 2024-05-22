@@ -49,11 +49,11 @@ const artStyle = computed(() => {
 
       <div class="desc_box">
          <div class="desc-shade" />
+         <img src="../../assets/desc_box.webp" alt="description-image" title="description-image" />
 
          <div class="name">{{ name }}</div>
 
          <div class="description" v-html="transformedDescription" />
-         <img src="../../assets/desc_box.webp" alt="description-image" title="description-image" />
 
          <div v-if="syndicate" class="syndicate">
             <img :src="syndicateIcon" />
@@ -109,8 +109,8 @@ $card-border: 10px;
          transform: translate(-50%, -50%);
          font-size: 2.5vw;
 
-         @media screen and (min-width: 1600px) {
-            font-size: 30px;
+         @media screen and (min-width: 2000px) {
+            font-size: 2.5rem;
          }
          @media (max-width: $screen-sm) {
             font-size: 6vw;
@@ -157,8 +157,8 @@ $card-border: 10px;
          font-size: 1.25vw;
          text-shadow: 0 0 5px black;
 
-         @media screen and (min-width: 1600px) {
-            font-size: 15px;
+         @media screen and (min-width: 2000px) {
+            font-size: 1.2rem;
          }
          @media (max-width: $screen-sm) {
             top: 8%;
@@ -182,8 +182,8 @@ $card-border: 10px;
          font-size: 1.2vw;
          text-shadow: 0 0 5px black;
 
-         @media screen and (min-width: 1600px) {
-            font-size: 15px;
+         @media screen and (min-width: 2000px) {
+            font-size: 1.5rem;
          }
          @media (max-width: $screen-sm) {
             font-size: 2.5vw;
@@ -207,8 +207,8 @@ $card-border: 10px;
          font-size: 2.5vw;
          text-shadow: 0 0 5px black;
 
-         @media screen and (min-width: 1600px) {
-            font-size: 30px;
+         @media screen and (min-width: 2000px) {
+            font-size: 2.5rem;
          }
          @media (max-width: $screen-sm) {
             font-size: 5vw;
