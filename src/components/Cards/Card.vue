@@ -227,7 +227,7 @@ $card-border: 10px;
       padding: 0 2%;
       position: absolute;
       bottom: 0.5%;
-      font-size: 0.6vw;
+      font-size: 0.8vw;
       @media (max-width: $screen-sm) {
          font-size: 2.25vw;
       }
