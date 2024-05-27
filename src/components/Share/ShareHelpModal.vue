@@ -24,6 +24,10 @@ defineEmits(['close']);
                <span>Use [brackets] to highlight keywords.</span>
             </p>
             <p>
+               <span v-html="transformDescription('{reference}')" />:
+               <span>Use {curly brackets} to highlight references to other cards.</span>
+            </p>
+            <p>
                <span v-html="transformDescription('*bold*')" />:
                <span>Use *asterisks* to bold words.</span>
             </p>
