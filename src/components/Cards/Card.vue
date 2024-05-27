@@ -151,6 +151,7 @@ $card-border: 10px;
       }
 
       .name {
+         width: calc(100% - 14%);
          position: absolute;
          top: 8%;
          left: 7%;
