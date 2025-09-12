@@ -20,6 +20,10 @@ defineEmits(['close']);
             <p>Card descriptions often feature highlights and other text decoration to emphasize certain words. The following formats are allowed in a card's description.</p>
             <br />
             <p>
+               <span v-html="transformDescription('(C)')" />:
+               <span>Use (C) to render the Chain icon.</span>
+            </p>
+            <p>
                <span v-html="transformDescription('[keyword]')" />:
                <span>Use [brackets] to highlight keywords.</span>
             </p>
