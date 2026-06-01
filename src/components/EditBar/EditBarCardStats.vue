@@ -85,7 +85,7 @@ const handleRange = ({ target: { name, value } }) => {
 
       <BaseInput textarea
          name="description"
-         placeholder="Description"
+         placeholder="Description. Hint: [keyword], {card reference}, <timeline>, @ for chain symbol."
          rows="6"
          :value="card.description"
          @input="handleValue"

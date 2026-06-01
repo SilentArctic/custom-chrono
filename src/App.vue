@@ -34,8 +34,8 @@ html {
 }
 
 :root {
-   --popper-theme-background-color: #{$blue};
-   --popper-theme-background-color-hover: #{$blue};
+   --popper-theme-background-color: rgba(255, 255, 255, 0.03);
+   --popper-theme-background-color-hover: rgba(255, 255, 255, 0.03);
    --popper-theme-text-color: #ffffff;
    --popper-theme-border-width: 1px;
    --popper-theme-border-style: solid;
@@ -55,7 +55,8 @@ html {
    max-height: 100vh;
    width: 100%;
    max-width: 100%;
-   background: linear-gradient(to bottom right, $blue, $red);
+   background: radial-gradient(ellipse at top, rgba($blue, 0.6) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba($red, 0.4) 0%, transparent 55%), $bg-dark;
    font-family: "Montserrat", sans-serif;
    font-optical-sizing: auto;
    color: white;

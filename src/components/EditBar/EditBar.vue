@@ -68,18 +68,18 @@ const cardStore = useCardStore();
 <style lang="scss" scoped>
 .edit-bar {
    height: 100%;
-   flex: 1;
-   min-width: 300px;
+   min-width: 400px;
    max-width: 400px;
-   background: rgba(255, 255, 255, 0.03);
+   flex: 1;
+   background: $glass;
    display: flex;
    flex-direction: column;
-   border: 1px solid rgba(255, 255, 255, 0.1);
+   border: $glass-border;
    border-radius: 10px;
    padding: 10px;
    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-   backdrop-filter: blur(3.9px);
-   -webkit-backdrop-filter: blur(3.9px);
+   backdrop-filter: $glass-blur;
+   -webkit-backdrop-filter: $glass-blur;
    overflow: auto;
    z-index: 3;
    &::-webkit-scrollbar { width: 17px; }

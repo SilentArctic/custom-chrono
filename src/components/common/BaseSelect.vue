@@ -20,7 +20,7 @@ select {
    &:first-child { margin-bottom: 10px; }
 
    :deep(option) {
-      background-color: #0a1030;
+      background-color: $bg-dark;
    }
 }
 </style>

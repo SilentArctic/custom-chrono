@@ -1,15 +1,16 @@
 <script setup>
-import { ref, computed } from 'vue';
-import Card from './Card.vue';
-import { useCardStore } from '@/stores/card.store';
-import * as CardTypes from '@/constants/cardTypes.constants';
+import { ref, computed } from "vue";
+import Card from "./Card.vue";
+import { useCardStore } from "@/stores/card.store";
+import * as CardTypes from "@/constants/cardTypes.constants";
 
 const cardStore = useCardStore();
 
 /* slide Agent cards horizontally on mobile displays */
 const isMobileSecondCard = ref(false);
 const mobilePos = computed(() => {
-   if (window.innerWidth > 750 || cardStore.cardType !== CardTypes.AGENT) return;
+   if (window.innerWidth > 750 || cardStore.cardType !== CardTypes.AGENT)
+      return;
    const translation = isMobileSecondCard.value ? -85 : 0;
    return { transform: `translateX(${translation}%)` };
 });
@@ -18,9 +19,12 @@ const mobilePos = computed(() => {
 <template>
    <div
       id="cards"
-      :class="['cards', {
-         agent: cardStore.cardType === CardTypes.AGENT,
-      }]"
+      :class="[
+         'cards',
+         {
+            agent: cardStore.cardType === CardTypes.AGENT,
+         },
+      ]"
       :style="mobilePos"
       @click="isMobileSecondCard = !isMobileSecondCard"
    >
@@ -33,9 +37,8 @@ const mobilePos = computed(() => {
             />
          </div>
 
-         <div v-if="cardStore.cardType === CardTypes.AGENT" class="spacer" />
-
-         <div v-if="cardStore.cardType === CardTypes.AGENT"
+         <div
+            v-if="cardStore.cardType === CardTypes.AGENT"
             id="print-wrapper-1"
             class="print-wrapper-card"
          >
@@ -62,6 +65,7 @@ const mobilePos = computed(() => {
       width: 100%;
       display: flex;
       justify-content: center;
+      gap: 1rem;
 
       @media (max-width: $screen-sm) {
          justify-content: flex-start;
@@ -70,6 +74,7 @@ const mobilePos = computed(() => {
 
    .print-wrapper-card {
       width: 50%;
+      max-width: 470px;
 
       @media (max-width: $screen-sm) {
          width: 100%;
@@ -77,26 +82,6 @@ const mobilePos = computed(() => {
          &:first-child:not(:last-child) {
             margin-right: 20px;
          }
-      }
-   }
-
-   .spacer {
-      height: 100%;
-      width: 5%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      img {
-         width: 50px;
-      }
-
-      @media (max-width: $screen-sm) {
-         height: 50%;
-         width: 50px;
-         position: fixed;
-         right: 5%;
-         z-index: 2;
       }
    }
 
@@ -108,7 +93,9 @@ const mobilePos = computed(() => {
       /* transition used for translateX (see script ^) */
       transition: all 0.15s ease-in-out;
 
-      &.agent { justify-content: flex-start; }
+      &.agent {
+         justify-content: flex-start;
+      }
    }
 }
 </style>
