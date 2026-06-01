@@ -40,7 +40,7 @@ input {
          color: transparent;
       }
       &::-webkit-slider-thumb {
-         background: green;
+         background: $gold;
          margin-top: -4px;
       }
       &::-webkit-slider-runnable-track {

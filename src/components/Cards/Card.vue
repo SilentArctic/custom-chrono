@@ -1,13 +1,20 @@
 <script setup>
-import { computed } from 'vue';
-import * as CardTypes from '@/constants/cardTypes.constants';
-import { transformDescription } from '@/utils';
+import {
+   computed,
+   ref,
+   watch,
+   onMounted,
+   onBeforeUnmount,
+   nextTick,
+} from "vue";
+import * as CardTypes from "@/constants/cardTypes.constants";
+import { transformDescription } from "@/utils";
 
 const props = defineProps({
    cardType: {
       type: String,
       required: true,
-      validator: val => Object.values(CardTypes).includes(val),
+      validator: (val) => Object.values(CardTypes).includes(val),
    },
    name: { type: String, required: true },
    art: { type: String, required: true },
@@ -21,7 +28,7 @@ const props = defineProps({
 });
 
 const syndicateIcon = computed(() => {
-   if (!props.syndicate) return '';
+   if (!props.syndicate) return "";
    return new URL(`../../assets/${props.syndicate}.webp`, import.meta.url);
 });
 
@@ -36,24 +43,79 @@ const artStyle = computed(() => {
       scale: 1 + z / 100,
    };
 });
+
+/* Shrink the description font until the text fits its bounded box.
+   The base size is card-relative (cqw); this only kicks in once a long
+   description would otherwise overflow, mirroring the in-game behaviour. */
+const MIN_FIT_SCALE = 0.45;
+const descBox = ref(null);
+const descText = ref(null);
+
+const fitDescription = () => {
+   const box = descBox.value;
+   const text = descText.value;
+   if (!box || !text) return;
+
+   let scale = 1;
+   text.style.setProperty("--fit-scale", "1");
+
+   let guard = 0;
+   while (
+      text.scrollHeight > box.clientHeight &&
+      scale > MIN_FIT_SCALE &&
+      guard < 40
+   ) {
+      scale = Math.max(MIN_FIT_SCALE, scale - 0.02);
+      text.style.setProperty("--fit-scale", String(scale));
+      guard += 1;
+   }
+};
+
+let resizeObserver;
+onMounted(() => {
+   resizeObserver = new ResizeObserver(() => fitDescription());
+   resizeObserver.observe(descBox.value);
+   /* re-fit once custom fonts have loaded, since metrics change */
+   document.fonts?.ready.then(fitDescription);
+});
+
+onBeforeUnmount(() => resizeObserver?.disconnect());
+
+watch(transformedDescription, () => nextTick(fitDescription));
 </script>
 
 <template>
    <div class="card">
-      <img v-if="art" class="card-image" :src="art" :style="artStyle" alt="Card image" />
+      <img
+         v-if="art"
+         class="card-image"
+         :src="art"
+         :style="artStyle"
+         alt="Card image"
+      />
 
       <div class="power-cost">
-         <img src="../../assets/power_cost.webp"/>
+         <img src="../../assets/power_cost.webp" />
          <div class="cost">{{ cost }}</div>
       </div>
 
       <div class="desc_box">
          <div class="desc-shade" />
-         <img src="../../assets/desc_box.webp" alt="description-image" title="description-image" />
+         <img
+            src="../../assets/desc_box.webp"
+            alt="description-image"
+            title="description-image"
+         />
 
          <div class="name">{{ name }}</div>
 
-         <div class="description" v-html="transformedDescription" />
+         <div ref="descBox" class="description">
+            <div
+               ref="descText"
+               class="description-text"
+               v-html="transformedDescription"
+            />
+         </div>
 
          <div v-if="syndicate" class="syndicate">
             <img :src="syndicateIcon" />
@@ -76,17 +138,23 @@ const artStyle = computed(() => {
 <style lang="scss" scoped>
 /* % and vw used extensively to maintain card scale regardless of screen size */
 
-$card-border: 10px;
+$card-border: 24px;
 .card {
+   /* container-type makes the card a query container, so every cqw unit
+      below is relative to the CARD's width rather than the viewport.
+      This ties all text directly to the card at any screen size. */
+   container-type: inline-size;
    max-height: 100vh;
    aspect-ratio: 3/4;
-   background: rgba(255, 255, 255, 0.03);
-   border: 1px solid rgba(255, 255, 255, 0.1);
+   background: $glass;
+   border: $glass-border;
+   border-width: 3px;
+   border-bottom-width: 6px;
    border-radius: $card-border;
    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
    position: relative;
-   backdrop-filter: blur(3.9px);
-   -webkit-backdrop-filter: blur(3.9px);
+   backdrop-filter: $glass-blur;
+   -webkit-backdrop-filter: $glass-blur;
    font-family: "Noto Serif", serif;
    overflow: hidden;
 
@@ -107,14 +175,7 @@ $card-border: 10px;
          top: 47%;
          left: 50%;
          transform: translate(-50%, -50%);
-         font-size: 2.5vw;
-
-         @media screen and (min-width: 2000px) {
-            font-size: 2.5rem;
-         }
-         @media (max-width: $screen-sm) {
-            font-size: 6vw;
-         }
+         font-size: 6cqw;
       }
    }
 
@@ -123,7 +184,9 @@ $card-border: 10px;
       position: absolute;
       bottom: 3%;
 
-      img { position: relative; }
+      img {
+         position: relative;
+      }
 
       .desc-shade {
          height: 90%;
@@ -138,7 +201,7 @@ $card-border: 10px;
             z-index: -1;
             inset: 0;
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.75);
-            content: '';
+            content: "";
             clip-path: polygon(
                0% 0%,
                100% 0%,
@@ -155,16 +218,8 @@ $card-border: 10px;
          position: absolute;
          top: 8%;
          left: 7%;
-         font-size: 1.25vw;
+         font-size: 3cqw;
          text-shadow: 0 0 5px black;
-
-         @media screen and (min-width: 2000px) {
-            font-size: 1.2rem;
-         }
-         @media (max-width: $screen-sm) {
-            top: 8%;
-            font-size: 3vw;
-         }
       }
 
       .syndicate {
@@ -174,20 +229,25 @@ $card-border: 10px;
          right: 7%;
       }
 
+      /* bounded text area below the name bar; content is vertically
+         centred and shrunk to fit via the --fit-scale set in script */
       .description {
-         width: 100%;
          position: absolute;
-         top: 0%;
-         padding: 18% 10% 0 10%;
+         top: 30%;
+         right: 0;
+         bottom: 21%;
+         left: 0;
+         padding: 0 9%;
+         display: flex;
+         justify-content: center;
+         overflow: hidden;
          text-align: center;
-         font-size: 1.2vw;
          text-shadow: 0 0 5px black;
 
-         @media screen and (min-width: 2000px) {
-            font-size: 1.5rem;
-         }
-         @media (max-width: $screen-sm) {
-            font-size: 2.5vw;
+         .description-text {
+            width: 100%;
+            font-size: calc(5cqw * var(--fit-scale, 1));
+            line-height: 1.3;
          }
 
          .highlight {
@@ -202,36 +262,31 @@ $card-border: 10px;
       bottom: -2%;
       left: -0.4%;
 
-      .strength, .durability {
+      .strength,
+      .durability {
          position: absolute;
          bottom: 30%;
-         font-size: 2.5vw;
+         font-size: 6cqw;
          text-shadow: 0 0 5px black;
-
-         @media screen and (min-width: 2000px) {
-            font-size: 2.5rem;
-         }
-         @media (max-width: $screen-sm) {
-            font-size: 5vw;
-         }
       }
 
-      .strength { left: 13%; }
+      .strength {
+         left: 13%;
+      }
 
-      .durability { right: 11%; }
+      .durability {
+         right: 11%;
+      }
    }
 
    .credits {
       width: 100%;
       display: flex;
       justify-content: space-between;
-      padding: 0 2%;
+      padding: 0 4.5%;
       position: absolute;
       bottom: 0.5%;
-      font-size: 0.8vw;
-      @media (max-width: $screen-sm) {
-         font-size: 2.25vw;
-      }
+      font-size: 2cqw;
    }
 }
 </style>

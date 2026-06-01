@@ -67,11 +67,11 @@ const handleDownload = async (fileType, close) => {
          : `${cardStore.cards[Number(index)].name}.${fileType}`;
 
       const dataUrl = await domToImage[downloadMethod](node, {
-         filter: node => !node.classList?.contains('spacer'),
-         style: {
-            padding: '0',
-            margin: '0',
-         },
+         // filter: node => !node.classList?.contains('spacer'),
+         // style: {
+         //    padding: '0',
+         //    margin: '0',
+         // },
       });
       const link = document.createElement('a');
       link.download = fileName;
@@ -96,7 +96,6 @@ const handleDownload = async (fileType, close) => {
       </Popper>
 
       <button @click="openHelp">Help</button>
-      <!-- <button class="star">★</button> -->
    </div>
 </template>
 

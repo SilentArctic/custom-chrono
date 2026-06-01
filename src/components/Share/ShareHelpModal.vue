@@ -20,8 +20,8 @@ defineEmits(['close']);
             <p>Card descriptions often feature highlights and other text decoration to emphasize certain words. The following formats are allowed in a card's description.</p>
             <br />
             <p>
-               <span v-html="transformDescription('(C)')" />:
-               <span>Use (C) to render the Chain icon.</span>
+               <span v-html="transformDescription('@')" />:
+               <span>Use @ to render the Chain icon.</span>
             </p>
             <p>
                <span v-html="transformDescription('[keyword]')" />:
@@ -30,6 +30,10 @@ defineEmits(['close']);
             <p>
                <span v-html="transformDescription('{reference}')" />:
                <span>Use {curly brackets} to highlight references to other cards.</span>
+            </p>
+            <p>
+               <span v-html="transformDescription('$timeline$')" />:
+               <span>Use $dollar signs$ to highlight timeline references.</span>
             </p>
             <p>
                <span v-html="transformDescription('*bold*')" />:
