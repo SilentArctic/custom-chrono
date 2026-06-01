@@ -17,14 +17,7 @@ export const useCardStore = defineStore("card", {
    state: () => ({
       cardType: CardTypes.AGENT,
       syndicate: "",
-      cards: [
-         {
-            ...cloneDeep(agentState),
-            description:
-               "[Enter:] @ Summon a {Seedling} and [Shift] to $Voiceless Sky$.",
-         },
-         cloneDeep(agentState),
-      ],
+      cards: [cloneDeep(agentState), cloneDeep(agentState)],
    }),
 
    actions: {
