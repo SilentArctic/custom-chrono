@@ -34,6 +34,7 @@ const mobilePos = computed(() => {
                v-bind="cardStore.cards[0]"
                :cardType="cardStore.cardType"
                :syndicate="cardStore.syndicate"
+               :rarity="cardStore.rarity"
             />
          </div>
 
@@ -46,6 +47,7 @@ const mobilePos = computed(() => {
                v-bind="cardStore.cards[1]"
                :cardType="cardStore.cardType"
                :syndicate="cardStore.syndicate"
+               :rarity="cardStore.rarity"
             />
          </div>
       </div>
@@ -79,9 +81,6 @@ const mobilePos = computed(() => {
       @media (max-width: $screen-sm) {
          width: 100%;
          min-width: 90%;
-         &:first-child:not(:last-child) {
-            margin-right: 20px;
-         }
       }
    }
 

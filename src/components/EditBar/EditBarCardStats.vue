@@ -2,6 +2,7 @@
 import * as CardTypes from '@/constants/cardTypes.constants';
 import EditBarArtSlider from './EditBarArtSlider.vue';
 import { BaseInput } from '../common';
+import BaseSelect from '../common/BaseSelect.vue';
 
 const emit = defineEmits(['updateValue', 'updateArtPos']);
 
@@ -9,7 +10,7 @@ defineProps({
    cardType: {
       type: String,
       required: true,
-      validator: val => Object.values(CardTypes).includes(val),
+      validator: (val) => Object.values(CardTypes).includes(val),
    },
    card: { type: Object, required: true },
 });
@@ -51,10 +52,26 @@ const handleRange = ({ target: { name, value } }) => {
          :value="card.artCredit"
          @input="handleValue"
       />
-      <EditBarArtSlider label="x" :value="card.artPos.x" @handleRange="handleRange" />
-      <EditBarArtSlider label="y" :value="card.artPos.y" @handleRange="handleRange" />
-      <EditBarArtSlider label="z" :value="card.artPos.z" @handleRange="handleRange" />
-      <EditBarArtSlider label="r" :value="card.artPos.r" @handleRange="handleRange" />
+      <EditBarArtSlider
+         label="x"
+         :value="card.artPos.x"
+         @handleRange="handleRange"
+      />
+      <EditBarArtSlider
+         label="y"
+         :value="card.artPos.y"
+         @handleRange="handleRange"
+      />
+      <EditBarArtSlider
+         label="z"
+         :value="card.artPos.z"
+         @handleRange="handleRange"
+      />
+      <EditBarArtSlider
+         label="r"
+         :value="card.artPos.r"
+         @handleRange="handleRange"
+      />
 
       <div class="row">
          <BaseInput
@@ -65,7 +82,8 @@ const handleRange = ({ target: { name, value } }) => {
             :value="card.cost"
             @input="handleNumValue"
          />
-         <BaseInput v-if="cardType === CardTypes.AGENT"
+         <BaseInput
+            v-if="cardType === CardTypes.AGENT"
             type="number"
             name="strength"
             placeholder="Strength"
@@ -73,7 +91,8 @@ const handleRange = ({ target: { name, value } }) => {
             :value="card.strength"
             @input="handleNumValue"
          />
-         <BaseInput v-if="cardType === CardTypes.AGENT"
+         <BaseInput
+            v-if="cardType === CardTypes.AGENT"
             type="number"
             name="durability"
             placeholder="Durability"
@@ -81,9 +100,22 @@ const handleRange = ({ target: { name, value } }) => {
             :value="card.durability"
             @input="handleNumValue"
          />
+
+         <div v-if="cardType === CardTypes.ACTION" />
+         <BaseSelect
+            v-if="cardType === CardTypes.ACTION"
+            name="actionSpeed"
+            :value="card.actionSpeed"
+            @input="handleValue"
+         >
+            <option value="immediate">Immediate</option>
+            <option value="fast">Fast</option>
+            <option value="slow">Slow</option>
+         </BaseSelect>
       </div>
 
-      <BaseInput textarea
+      <BaseInput
+         textarea
          name="description"
          placeholder="Description. Hint: [keyword], {card reference}, <timeline>, @ for chain symbol."
          rows="6"

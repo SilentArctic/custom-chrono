@@ -1,22 +1,27 @@
-import { defineStore } from "pinia";
-import cloneDeep from "lodash/cloneDeep";
-import * as CardTypes from "../constants/cardTypes.constants";
+import { defineStore } from 'pinia';
+import cloneDeep from 'lodash/cloneDeep';
+import * as ActionSpeeds from '../constants/actionSpeeds.constants';
+import * as CardTypes from '../constants/cardTypes.constants';
+import * as Rarities from '../constants/rarities.constants';
 
 const agentState = {
-   name: "",
-   art: "",
-   artCredit: "",
+   name: '',
+   art: '',
+   artCredit: '',
    artPos: { x: 0, y: 0, z: 0, r: 0 },
-   description: "",
+   description: '',
    cost: 0,
    strength: 0,
    durability: 0,
+   actionSpeed: ActionSpeeds.IMMEDIATE,
+   rarity: Rarities.COMMON,
 };
 
-export const useCardStore = defineStore("card", {
+export const useCardStore = defineStore('card', {
    state: () => ({
       cardType: CardTypes.AGENT,
-      syndicate: "",
+      syndicate: '',
+      rarity: Rarities.COMMON,
       cards: [cloneDeep(agentState), cloneDeep(agentState)],
    }),
 
@@ -27,6 +32,10 @@ export const useCardStore = defineStore("card", {
 
       setSyndicate(syndicate) {
          this.syndicate = syndicate;
+      },
+
+      setRarity(rarity) {
+         this.rarity = rarity;
       },
 
       setValue(index, name, value) {
@@ -43,18 +52,23 @@ export const useCardStore = defineStore("card", {
          for (const [statName, value] of params) {
             const decodedValue = decodeURIComponent(value);
             if (!decodedValue) continue;
-            else if (statName === "cardType") this.cardType = decodedValue;
-            else if (statName === "syndicate") this.syndicate = decodedValue;
+            else if (statName === 'cardType') this.cardType = decodedValue;
+            else if (statName === 'syndicate') this.syndicate = decodedValue;
             else {
-               decodedValue.split(";").forEach((cardValue, i) => {
-                  if (statName === "artPos") {
+               decodedValue.split(';').forEach((cardValue, i) => {
+                  if (statName === 'artPos') {
                      /* assign artPos values */
-                     cardValue.split(",").forEach((coord) => {
-                        const [name, position] = coord.split(":");
+                     cardValue.split(',').forEach((coord) => {
+                        const [name, position] = coord.split(':');
                         this.cards[i].artPos[name] = Number(position);
                      });
                   } else {
-                     const nums = ["cost", "strength", "durability"];
+                     const nums = [
+                        'cost',
+                        'strength',
+                        'durability',
+                        'actionSpeed',
+                     ];
                      this.cards[i][statName] = nums.includes(statName)
                         ? Number(cardValue)
                         : cardValue;

@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
 import * as Syndicates from '@/constants/syndicates.constants';
+import * as Rarities from '@/constants/rarities.constants';
 import { BaseHr, BaseSelect } from '../common';
 import EditBarCardStats from './EditBarCardStats.vue';
 
@@ -18,29 +19,38 @@ const cardStore = useCardStore();
 
       <BaseSelect
          name="card-type"
-         class="card-type"
+         class="top-select"
          :value="cardStore.cardType"
          @input="cardStore.setCardType($event.target.value)"
       >
-         <option v-for="cType in CardTypes"
-            :key="cType"
-            :value="cType"
-         >
+         <option v-for="cType in CardTypes" :key="cType" :value="cType">
             {{ cType }}
          </option>
       </BaseSelect>
 
       <BaseSelect
          name="syndicate"
+         class="top-select"
          :value="cardStore.syndicate"
          @input="cardStore.setSyndicate($event.target.value)"
       >
          <option value="">Choose a Syndicate...</option>
-         <option v-for="syndicate in Syndicates"
+         <option
+            v-for="syndicate in Syndicates"
             :key="syndicate"
             :value="syndicate"
          >
             {{ syndicate }}
+         </option>
+      </BaseSelect>
+
+      <BaseSelect
+         name="rarity"
+         :value="cardStore.rarity"
+         @input="cardStore.setRarity($event.target.value)"
+      >
+         <option v-for="rarity in Rarities.ALL" :key="rarity" :value="rarity">
+            {{ rarity }}
          </option>
       </BaseSelect>
 
@@ -82,8 +92,12 @@ const cardStore = useCardStore();
    -webkit-backdrop-filter: $glass-blur;
    overflow: auto;
    z-index: 3;
-   &::-webkit-scrollbar { width: 17px; }
-   &::-webkit-scrollbar-track { background: transparent; }
+   &::-webkit-scrollbar {
+      width: 17px;
+   }
+   &::-webkit-scrollbar-track {
+      background: transparent;
+   }
    &::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.1);
       border: 6px solid transparent;
@@ -94,12 +108,21 @@ const cardStore = useCardStore();
    @media (max-width: $screen-sm) {
       height: calc(100% - 10%);
       width: 100%;
+      min-width: 100%;
       max-width: none;
-      background: linear-gradient(to bottom right, $blue, $red);
+      background:
+         radial-gradient(ellipse at top, rgba($blue, 0.6) 0%, transparent 55%),
+         radial-gradient(
+            ellipse at bottom right,
+            rgba($red, 0.4) 0%,
+            transparent 55%
+         ),
+         $bg-dark;
       position: absolute;
       top: 10%;
       left: 0;
       padding-top: 0;
+      padding-right: 0;
       transition: top 0.15s ease-in-out;
       &.low {
          $distance: 80%;
@@ -115,13 +138,15 @@ const cardStore = useCardStore();
       span {
          transform: rotate(-90deg);
          transition: all 0.15s ease-in-out;
-         &.low { transform: rotate(90deg); }
+         &.low {
+            transform: rotate(90deg);
+         }
       }
 
       @media (max-width: $screen-sm) {
          width: 100%;
-         background: #280e23;
-         // background: $blue;
+         // background: #280e23;
+         background: $glass;
          display: flex;
          justify-content: center;
          align-items: center;
@@ -135,7 +160,7 @@ const cardStore = useCardStore();
       }
    }
 
-   .card-type {
+   .top-select {
       margin-bottom: 10px;
    }
 }

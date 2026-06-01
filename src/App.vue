@@ -34,8 +34,8 @@ html {
 }
 
 :root {
-   --popper-theme-background-color: rgba(255, 255, 255, 0.03);
-   --popper-theme-background-color-hover: rgba(255, 255, 255, 0.03);
+   --popper-theme-background-color: rgba(15, 18, 28, 0.75);
+   --popper-theme-background-color-hover: rgba(15, 18, 28, 0.75);
    --popper-theme-text-color: #ffffff;
    --popper-theme-border-width: 1px;
    --popper-theme-border-style: solid;

@@ -6,9 +6,9 @@ import {
    onMounted,
    onBeforeUnmount,
    nextTick,
-} from "vue";
-import * as CardTypes from "@/constants/cardTypes.constants";
-import { transformDescription } from "@/utils";
+} from 'vue';
+import * as CardTypes from '@/constants/cardTypes.constants';
+import { transformDescription } from '@/utils';
 
 const props = defineProps({
    cardType: {
@@ -25,10 +25,16 @@ const props = defineProps({
    syndicate: { type: String, required: true },
    strength: { type: Number },
    durability: { type: Number },
+   actionSpeed: { type: String, default: 'immediate' },
+   rarity: { type: String, default: 'rarity_common' },
 });
 
+const rarityIcon = computed(
+   () => new URL(`../../assets/rarity_${props.rarity}.webp`, import.meta.url),
+);
+
 const syndicateIcon = computed(() => {
-   if (!props.syndicate) return "";
+   if (!props.syndicate) return '';
    return new URL(`../../assets/${props.syndicate}.webp`, import.meta.url);
 });
 
@@ -44,12 +50,43 @@ const artStyle = computed(() => {
    };
 });
 
+const costIcon = computed(() =>
+   props.cardType === CardTypes.AGENT
+      ? new URL('../../assets/power_cost.webp', import.meta.url)
+      : new URL(
+           `../../assets/power_cost_${props.actionSpeed}.webp`,
+           import.meta.url,
+        ),
+);
+
 /* Shrink the description font until the text fits its bounded box.
    The base size is card-relative (cqw); this only kicks in once a long
    description would otherwise overflow, mirroring the in-game behaviour. */
 const MIN_FIT_SCALE = 0.45;
 const descBox = ref(null);
 const descText = ref(null);
+const nameBox = ref(null);
+const nameText = ref(null);
+
+const fitName = () => {
+   const box = nameBox.value;
+   const text = nameText.value;
+   if (!box || !text) return;
+
+   let scale = 1;
+   text.style.setProperty('--name-fit-scale', '1');
+
+   let guard = 0;
+   while (
+      text.scrollWidth > box.clientWidth &&
+      scale > MIN_FIT_SCALE &&
+      guard < 40
+   ) {
+      scale = Math.max(MIN_FIT_SCALE, scale - 0.02);
+      text.style.setProperty('--name-fit-scale', String(scale));
+      guard += 1;
+   }
+};
 
 const fitDescription = () => {
    const box = descBox.value;
@@ -57,7 +94,7 @@ const fitDescription = () => {
    if (!box || !text) return;
 
    let scale = 1;
-   text.style.setProperty("--fit-scale", "1");
+   text.style.setProperty('--fit-scale', '1');
 
    let guard = 0;
    while (
@@ -66,22 +103,33 @@ const fitDescription = () => {
       guard < 40
    ) {
       scale = Math.max(MIN_FIT_SCALE, scale - 0.02);
-      text.style.setProperty("--fit-scale", String(scale));
+      text.style.setProperty('--fit-scale', String(scale));
       guard += 1;
    }
 };
 
 let resizeObserver;
 onMounted(() => {
-   resizeObserver = new ResizeObserver(() => fitDescription());
+   resizeObserver = new ResizeObserver(() => {
+      fitDescription();
+      fitName();
+   });
    resizeObserver.observe(descBox.value);
+   resizeObserver.observe(nameBox.value);
    /* re-fit once custom fonts have loaded, since metrics change */
-   document.fonts?.ready.then(fitDescription);
+   document.fonts?.ready.then(() => {
+      fitDescription();
+      fitName();
+   });
 });
 
 onBeforeUnmount(() => resizeObserver?.disconnect());
 
 watch(transformedDescription, () => nextTick(fitDescription));
+watch(
+   () => props.name,
+   () => nextTick(fitName),
+);
 </script>
 
 <template>
@@ -94,9 +142,24 @@ watch(transformedDescription, () => nextTick(fitDescription));
          alt="Card image"
       />
 
-      <div class="power-cost">
-         <img src="../../assets/power_cost.webp" />
+      <img
+         src="../../assets/card_frame.webp"
+         class="card-frame"
+         alt="Card frame"
+      />
+
+      <div :class="['power-cost', cardType]">
+         <img :src="costIcon" />
          <div class="cost">{{ cost }}</div>
+      </div>
+
+      <div v-if="cardType === CardTypes.ACTION" class="action-type">
+         {{ actionSpeed }}
+         <img
+            v-if="actionSpeed !== 'immediate'"
+            src="../../assets/chain.webp"
+            alt="chain symbol"
+         />
       </div>
 
       <div class="desc_box">
@@ -107,7 +170,9 @@ watch(transformedDescription, () => nextTick(fitDescription));
             title="description-image"
          />
 
-         <div class="name">{{ name }}</div>
+         <div ref="nameBox" class="name">
+            <span ref="nameText" class="name-text">{{ name }}</span>
+         </div>
 
          <div ref="descBox" class="description">
             <div
@@ -121,6 +186,8 @@ watch(transformedDescription, () => nextTick(fitDescription));
             <img :src="syndicateIcon" />
          </div>
       </div>
+
+      <img :src="rarityIcon" class="rarity-icon" alt="Rarity icon" />
 
       <div v-if="cardType === CardTypes.AGENT" class="agent-stats">
          <img src="../../assets/agent_stats.webp" />
@@ -138,28 +205,32 @@ watch(transformedDescription, () => nextTick(fitDescription));
 <style lang="scss" scoped>
 /* % and vw used extensively to maintain card scale regardless of screen size */
 
-$card-border: 24px;
 .card {
    /* container-type makes the card a query container, so every cqw unit
       below is relative to the CARD's width rather than the viewport.
       This ties all text directly to the card at any screen size. */
    container-type: inline-size;
    max-height: 100vh;
-   aspect-ratio: 3/4;
    background: $glass;
-   border: $glass-border;
-   border-width: 3px;
-   border-bottom-width: 6px;
-   border-radius: $card-border;
+   aspect-ratio: 3/4;
+   border-radius: 6.5%;
    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
    position: relative;
    backdrop-filter: $glass-blur;
    -webkit-backdrop-filter: $glass-blur;
-   font-family: "Noto Serif", serif;
+   font-family: 'Noto Serif', serif;
    overflow: hidden;
 
    .card-image {
       width: 100%;
+   }
+
+   .card-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
    }
 
    .power-cost {
@@ -169,6 +240,15 @@ $card-border: 24px;
       top: 2%;
       left: 2%;
       text-shadow: 0 0 5px black;
+      &.action {
+         height: 18%;
+         top: 1%;
+         left: -1%;
+
+         .cost {
+            top: 44%;
+         }
+      }
 
       .cost {
          position: absolute;
@@ -179,9 +259,31 @@ $card-border: 24px;
       }
    }
 
-   .desc_box {
-      width: 100%;
+   .action-type {
+      background: linear-gradient(to bottom, #4448, #0008);
+      display: flex;
+      align-items: center;
+      border: 2px solid $gold;
+      border-radius: 10px;
+      padding: 0.25rem 0.5rem;
       position: absolute;
+      top: 3%;
+      right: 5%;
+      font-size: 3cqw;
+      text-shadow: 0 0 5px black;
+      text-transform: uppercase;
+
+      img {
+         margin-left: 5px;
+         width: 4cqw;
+         height: auto;
+      }
+   }
+
+   .desc_box {
+      width: 97%;
+      position: absolute;
+      left: 1.25%;
       bottom: 3%;
 
       img {
@@ -201,7 +303,7 @@ $card-border: 24px;
             z-index: -1;
             inset: 0;
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.75);
-            content: "";
+            content: '';
             clip-path: polygon(
                0% 0%,
                100% 0%,
@@ -214,12 +316,22 @@ $card-border: 24px;
       }
 
       .name {
-         width: calc(100% - 14%);
          position: absolute;
-         top: 8%;
+         top: 7%;
          left: 7%;
-         font-size: 3cqw;
+         /* stop before syndicate icon (6% wide + 7% right margin + 2% gap) */
+         right: 17%;
+         height: 6cqw;
+         display: flex;
+         align-items: center;
+         overflow: hidden;
          text-shadow: 0 0 5px black;
+
+         .name-text {
+            display: block;
+            white-space: nowrap;
+            font-size: calc(4cqw * var(--name-fit-scale, 1));
+         }
       }
 
       .syndicate {
@@ -256,6 +368,15 @@ $card-border: 24px;
       }
    }
 
+   .rarity-icon {
+      position: absolute;
+      width: 10%;
+      bottom: 2.4%;
+      left: 50%;
+      z-index: 5;
+      transform: translateX(-50%);
+   }
+
    .agent-stats {
       width: 100%;
       position: absolute;
@@ -285,7 +406,7 @@ $card-border: 24px;
       justify-content: space-between;
       padding: 0 4.5%;
       position: absolute;
-      bottom: 0.5%;
+      bottom: 1%;
       font-size: 2cqw;
    }
 }
