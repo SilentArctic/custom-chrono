@@ -211,6 +211,12 @@ watch(
       This ties all text directly to the card at any screen size. */
    container-type: inline-size;
    max-height: 100vh;
+
+   @media (max-width: $screen-sm) {
+      /* 80vh = top of the EditBar strip; 120px = 10px body padding + 100px
+         cards padding-top + 10px gap so the card clears the EditBar */
+      max-height: calc(80vh - 120px);
+   }
    background: $glass;
    aspect-ratio: 3/4;
    border-radius: 6.5%;
@@ -218,7 +224,9 @@ watch(
    position: relative;
    backdrop-filter: $glass-blur;
    -webkit-backdrop-filter: $glass-blur;
-   font-family: 'Noto Serif', serif;
+   font-family: "Barlow Condensed", sans-serif;
+   letter-spacing: 7.5%;
+   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
    overflow: hidden;
 
    .card-image {
@@ -234,28 +242,30 @@ watch(
    }
 
    .power-cost {
-      height: 13.33%;
+      height: 16%;
       aspect-ratio: 1;
       position: absolute;
       top: 2%;
       left: 2%;
       text-shadow: 0 0 5px black;
       &.action {
-         height: 18%;
+         height: 22%;
          top: 1%;
          left: -1%;
 
          .cost {
-            top: 44%;
+            top: 42%;
+            left: 51%;
          }
       }
 
       .cost {
          position: absolute;
          top: 47%;
-         left: 50%;
+         left: 52%;
          transform: translate(-50%, -50%);
-         font-size: 6cqw;
+         font-size: calc(9cqw * var(--name-fit-scale, 1));
+         font-weight: 600;
       }
    }
 
@@ -269,7 +279,7 @@ watch(
       position: absolute;
       top: 3%;
       right: 5%;
-      font-size: 3cqw;
+      font-size: 4.5cqw;
       text-shadow: 0 0 5px black;
       text-transform: uppercase;
 
@@ -330,7 +340,7 @@ watch(
          .name-text {
             display: block;
             white-space: nowrap;
-            font-size: calc(4cqw * var(--name-fit-scale, 1));
+            font-size: calc(5cqw * var(--name-fit-scale, 1));
          }
       }
 
@@ -358,7 +368,7 @@ watch(
 
          .description-text {
             width: 100%;
-            font-size: calc(5cqw * var(--fit-scale, 1));
+            font-size: calc(6cqw * var(--fit-scale, 1));
             line-height: 1.3;
          }
 
@@ -387,8 +397,8 @@ watch(
       .durability {
          position: absolute;
          bottom: 30%;
-         font-size: 6cqw;
-         text-shadow: 0 0 5px black;
+         font-size: calc(6.5cqw * var(--name-fit-scale, 1));
+         font-weight: 600;
       }
 
       .strength {

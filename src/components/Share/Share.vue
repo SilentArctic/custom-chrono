@@ -1,6 +1,6 @@
 <script setup>
 import { useModal } from 'vue-final-modal';
-import domToImage from 'dom-to-image';
+import * as htmlToImage from 'html-to-image';
 import map from 'lodash/map';
 import Popper from 'vue3-popper';
 import { useToast } from 'vue-toast-notification';
@@ -17,14 +17,17 @@ const { open: openHelp, close: closeHelp } = useModal({
 });
 
 const handleShare = () => {
-   const { cardType, syndicate, cards } = cardStore;
-   const params = { cardType, syndicate };
+   const { cardType, syndicate, rarity, cards } = cardStore;
+   const params = { cardType, syndicate, rarity };
 
-   cards.forEach(card => {
-      Object.keys(card).forEach(key => {
-         let value = typeof card[key] === 'object'
-            ? map(card[key], (v, k) => `${k}:${v}`).join(',')
-            : card[key];
+   cards.forEach((card) => {
+      Object.keys(card).forEach((key) => {
+         if (key === 'rarity') return;
+
+         let value =
+            typeof card[key] === 'object'
+               ? map(card[key], (v, k) => `${k}:${v}`).join(',')
+               : card[key];
          value = encodeURIComponent(value);
 
          if (params[key]) {
@@ -44,8 +47,12 @@ const handleShare = () => {
 const handleDownload = async (fileType, close) => {
    close();
 
-   const downloadMethod = fileType === 'svg' ? 'toSvg'
-      : fileType === 'png' && 'toPng';
+   /* Target render width per card so PNG output is consistent and crisp
+      regardless of how large the card is displayed on the user's screen. */
+      const TARGET_CARD_WIDTH = 940;
+
+   const downloadMethod =
+      fileType === 'svg' ? 'toSvg' : fileType === 'png' && 'toPng';
 
    const ids = [
       'print-wrapper-0',
@@ -62,16 +69,55 @@ const handleDownload = async (fileType, close) => {
       if (!node) return;
 
       const index = id.split('-')[2];
-      const fileName = id === cardsWrapperId
-         ? `${cardStore.cards[0].name}_${cardStore.cards[1].name}.${fileType}`
-         : `${cardStore.cards[Number(index)].name}.${fileType}`;
+      const fileName =
+         id === cardsWrapperId
+            ? `${cardStore.cards[0].name}_${cardStore.cards[1].name}.${fileType}`
+            : `${cardStore.cards[Number(index)].name}.${fileType}`;
 
-      const dataUrl = await domToImage[downloadMethod](node, {
-         // filter: node => !node.classList?.contains('spacer'),
-         // style: {
-         //    padding: '0',
-         //    margin: '0',
-         // },
+      /* For the combined PNG, stitch two individually-captured cards on a
+         canvas instead of capturing print-wrapper-all directly. Capturing
+         both cards in a single html-to-image call introduces a thin
+         rendering artifact at the boundary between them. */
+      if (id === cardsWrapperId && fileType === 'png') {
+         const node0 = document.getElementById('print-wrapper-0');
+         const node1 = document.getElementById('print-wrapper-1');
+         const pr = Math.max(window.devicePixelRatio, TARGET_CARD_WIDTH / node0.offsetWidth);
+         const captureOpts = { filter: (n) => !n.classList?.contains('spacer'), pixelRatio: pr };
+         const [url0, url1] = await Promise.all([
+            htmlToImage.toPng(node0, captureOpts),
+            htmlToImage.toPng(node1, captureOpts),
+         ]);
+         const loadImg = (url) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = url; });
+         const [img0, img1] = await Promise.all([loadImg(url0), loadImg(url1)]);
+         const gap = Math.round(16 * pr); // 1rem gap scaled to output resolution
+         const canvas = document.createElement('canvas');
+         canvas.width = img0.width + gap + img1.width;
+         canvas.height = Math.max(img0.height, img1.height);
+         const ctx = canvas.getContext('2d');
+         ctx.fillStyle = '#06070b';
+         ctx.fillRect(0, 0, canvas.width, canvas.height);
+         ctx.drawImage(img0, 0, 0);
+         ctx.drawImage(img1, img0.width + gap, 0);
+         const link = document.createElement('a');
+         link.download = fileName;
+         link.href = canvas.toDataURL('image/png');
+         link.click();
+         continue;
+      }
+
+      /* Scale the capture up to TARGET_CARD_WIDTH so output quality is the
+         same on small and large screens. A single card spans the full node
+         width; the agent pair (print-wrapper-all) holds two side by side. */
+      const cardsAcross = id === cardsWrapperId ? 2 : 1;
+      const targetWidth = TARGET_CARD_WIDTH * cardsAcross;
+      const pixelRatio = Math.max(
+         window.devicePixelRatio,
+         targetWidth / node.offsetWidth,
+      );
+
+      const dataUrl = await htmlToImage[downloadMethod](node, {
+         filter: (node) => !node.classList?.contains('spacer'),
+         ...(fileType === 'png' && { pixelRatio }),
       });
       const link = document.createElement('a');
       link.download = fileName;
@@ -89,8 +135,12 @@ const handleDownload = async (fileType, close) => {
          <button>Download</button>
          <template #content="{ close }">
             <div class="download-options">
-               <button @click="handleDownload('svg', close)">SVG (High Quality)</button>
-               <button @click="handleDownload('png', close)">PNG (Easier Uploading)</button>
+               <button @click="handleDownload('svg', close)">
+                  SVG (High Quality)
+               </button>
+               <button @click="handleDownload('png', close)">
+                  PNG (Easier Uploading)
+               </button>
             </div>
          </template>
       </Popper>
@@ -119,7 +169,9 @@ const handleDownload = async (fileType, close) => {
       border-radius: 3px;
       color: white;
       transition: all 0.15s ease;
-      &:hover { opacity: 0.6; }
+      &:hover {
+         opacity: 0.6;
+      }
    }
 
    .download-options {
@@ -133,7 +185,9 @@ const handleDownload = async (fileType, close) => {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
 
-      button { width: 100%; }
+      button {
+         width: 100%;
+      }
    }
 }
 </style>

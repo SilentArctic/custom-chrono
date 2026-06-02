@@ -54,6 +54,7 @@ export const useCardStore = defineStore('card', {
             if (!decodedValue) continue;
             else if (statName === 'cardType') this.cardType = decodedValue;
             else if (statName === 'syndicate') this.syndicate = decodedValue;
+            else if (statName === 'rarity') this.rarity = decodedValue;
             else {
                decodedValue.split(';').forEach((cardValue, i) => {
                   if (statName === 'artPos') {
@@ -67,7 +68,6 @@ export const useCardStore = defineStore('card', {
                         'cost',
                         'strength',
                         'durability',
-                        'actionSpeed',
                      ];
                      this.cards[i][statName] = nums.includes(statName)
                         ? Number(cardValue)
