@@ -197,7 +197,7 @@ watch(
 
       <div class="credits">
          <div class="site">https://customchrono.netlify.app</div>
-         <div class="art">Art: {{ artCredit }}</div>
+         <div v-if="artCredit" class="art">Art: {{ artCredit }}</div>
       </div>
    </div>
 </template>
