@@ -17,6 +17,7 @@
     "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "sass": "^1.77.2",
+    "vanilla-tilt": "^1.8.1",
     "vue": "^3.4.21",
     "vue-final-modal": "^4.5.4",
     "vue-toast-notification": "^3.1.2",

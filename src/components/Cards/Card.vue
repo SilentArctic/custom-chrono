@@ -3,10 +3,12 @@ import {
    computed,
    ref,
    watch,
+   watchEffect,
    onMounted,
    onBeforeUnmount,
    nextTick,
 } from 'vue';
+import VanillaTilt from 'vanilla-tilt';
 import * as CardTypes from '@/constants/cardTypes.constants';
 import { transformDescription } from '@/utils';
 
@@ -130,10 +132,16 @@ watch(
    () => props.name,
    () => nextTick(fitName),
 );
+
+const cardRef = ref(null);
+watchEffect(() => {
+   if (!cardRef.value) return;
+   VanillaTilt.init(cardRef.value, { max: 4 });
+});
 </script>
 
 <template>
-   <div class="card">
+   <div ref="cardRef" class="card">
       <img
          v-if="art"
          class="card-image"
@@ -224,9 +232,13 @@ watch(
    position: relative;
    backdrop-filter: $glass-blur;
    -webkit-backdrop-filter: $glass-blur;
-   font-family: "Barlow Condensed", sans-serif;
+   font-family: 'Barlow Condensed', sans-serif;
    letter-spacing: 7.5%;
-   text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+   text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
    overflow: hidden;
 
    .card-image {
