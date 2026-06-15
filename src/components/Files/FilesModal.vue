@@ -7,7 +7,7 @@ import { useFilesStore } from '@/stores/files.store';
 import { buildCardParams } from '@/utils/serializeState';
 import { BaseHr } from '../common';
 
-defineEmits(['close']);
+const emit = defineEmits(['close']);
 
 const cardStore = useCardStore();
 const filesStore = useFilesStore();
@@ -69,12 +69,13 @@ const handleSaveFile = async () => {
 
 const handleNew = () => {
    cardStore.reset();
-   $toast.success('New card created');
+   emit('close');
 };
 
 const handleLoadFile = (file) => {
    cardStore.setFromParams(new URLSearchParams(file.params));
    $toast.success(`Loaded "${file.name}"`);
+   emit('close');
 };
 
 const handleDeleteFolder = async (folder) => {
