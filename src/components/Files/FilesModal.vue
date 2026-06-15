@@ -67,6 +67,11 @@ const handleSaveFile = async () => {
    $toast.success('File saved!');
 };
 
+const handleNew = () => {
+   cardStore.reset();
+   $toast.success('New card created');
+};
+
 const handleLoadFile = (file) => {
    cardStore.setFromParams(new URLSearchParams(file.params));
    $toast.success(`Loaded "${file.name}"`);
@@ -127,6 +132,10 @@ const isEmpty = computed(() =>
                class="action-btn"
                @click="toggleFileInput"
             >+ Save File</button>
+            <button
+               class="action-btn new-btn"
+               @click="handleNew"
+            >+ New</button>
          </div>
 
          <div v-if="showFolderInput" class="inline-input-row">
@@ -254,6 +263,10 @@ const isEmpty = computed(() =>
 .files-actions {
    display: flex;
    gap: 0.5rem;
+
+   .new-btn {
+      margin-left: auto;
+   }
 
    .action-btn {
       background: rgba(255, 255, 255, 0.07);
