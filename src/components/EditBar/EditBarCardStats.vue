@@ -34,6 +34,7 @@ const handleRange = ({ target: { name, value } }) => {
          name="name"
          placeholder="Name"
          autocomplete="off"
+         autocapitalize="words"
          :value="card.name"
          @input="handleValue"
       />
