@@ -114,8 +114,9 @@ const handleDownload = async (fileType, close) => {
    <div class="share">
       <button title="Share" @click="handleShare">
          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M3 17a9 9 0 0 1 9-9h7"/>
-            <polyline points="15 4 19 8 15 12"/>
+            <path d="M14 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9"/>
+            <path d="M8 16c1-5 5-8 12-8"/>
+            <polyline points="16 3 20 7 16 11"/>
          </svg>
       </button>
 
