@@ -1,12 +1,13 @@
 <script setup>
 import { useModal } from 'vue-final-modal';
 import * as htmlToImage from 'html-to-image';
-import map from 'lodash/map';
 import Popper from 'vue3-popper';
 import { useToast } from 'vue-toast-notification';
 import { useCardStore } from '@/stores/card.store';
 import * as CardTypes from '@/constants/cardTypes.constants';
+import { buildCardParams } from '@/utils/serializeState';
 import ShareHelpModal from './ShareHelpModal.vue';
+import FilesModal from '@/components/Files/FilesModal.vue';
 
 const $toast = useToast();
 const cardStore = useCardStore();
@@ -16,31 +17,13 @@ const { open: openHelp, close: closeHelp } = useModal({
    attrs: { onClose: () => closeHelp() },
 });
 
+const { open: openFiles, close: closeFiles } = useModal({
+   component: FilesModal,
+   attrs: { onClose: () => closeFiles() },
+});
+
 const handleShare = () => {
-   const { cardType, syndicate, rarity, cards } = cardStore;
-   const params = { cardType, syndicate, rarity };
-
-   cards.forEach((card) => {
-      Object.keys(card).forEach((key) => {
-         if (key === 'rarity') return;
-
-         let value =
-            typeof card[key] === 'object'
-               ? map(card[key], (v, k) => `${k}:${v}`).join(',')
-               : card[key];
-         value = encodeURIComponent(value);
-
-         if (params[key]) {
-            params[key] += `;${value}`;
-         } else {
-            params[key] = value;
-         }
-      });
-   });
-
-   const search = new URLSearchParams(params);
-   navigator.clipboard.writeText(window.location.href + '?' + search);
-
+   navigator.clipboard.writeText(window.location.href + '?' + buildCardParams(cardStore));
    $toast.success('Link copied to clipboard!');
 };
 
@@ -145,6 +128,8 @@ const handleDownload = async (fileType, close) => {
          </template>
       </Popper>
 
+      <button @click="openFiles">Files</button>
+
       <button @click="openHelp">Help</button>
    </div>
 </template>
@@ -183,7 +168,7 @@ const handleDownload = async (fileType, close) => {
    @media (max-width: $screen-sm) {
       width: calc(100% - 20px);
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
 
       button {
          width: 100%;
