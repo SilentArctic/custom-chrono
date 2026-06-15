@@ -47,7 +47,7 @@ const toggleFolderInput = () => {
 const toggleFileInput = () => {
    showFileInput.value = !showFileInput.value;
    showFolderInput.value = false;
-   newFileName.value = '';
+   newFileName.value = showFileInput.value ? (cardStore.cards[0].name || '') : '';
 };
 
 const handleCreateFolder = async () => {
