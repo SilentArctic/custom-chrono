@@ -46,6 +46,13 @@ export const useCardStore = defineStore('card', {
          this.cards[index].artPos[name] = Number(value);
       },
 
+      reset() {
+         this.cardType = CardTypes.AGENT;
+         this.syndicate = '';
+         this.rarity = Rarities.COMMON;
+         this.cards = [cloneDeep(agentState), cloneDeep(agentState)];
+      },
+
       setFromParams(params) {
          if (!params.size) return;
 
