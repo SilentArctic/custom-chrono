@@ -118,6 +118,7 @@ const handleDownload = async (fileType, close) => {
             <polyline points="16 6 12 2 8 6"/>
             <line x1="12" y1="2" x2="12" y2="15"/>
          </svg>
+         <span>Share</span>
       </button>
 
       <Popper arrow>
@@ -127,6 +128,7 @@ const handleDownload = async (fileType, close) => {
                <polyline points="7 10 12 15 17 10"/>
                <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
+            <span>Download</span>
          </button>
          <template #content="{ close }">
             <div class="download-options">
@@ -144,6 +146,7 @@ const handleDownload = async (fileType, close) => {
          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
          </svg>
+         <span>Files</span>
       </button>
 
       <button title="Help" @click="openHelp">
@@ -152,6 +155,7 @@ const handleDownload = async (fileType, close) => {
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
             <line x1="12" y1="17" x2="12.01" y2="17"/>
          </svg>
+         <span>Help</span>
       </button>
    </div>
 </template>
@@ -160,6 +164,7 @@ const handleDownload = async (fileType, close) => {
 .share {
    background: rgba(255, 255, 255, 0.03);
    display: flex;
+   gap: 1rem;
    border: 1px solid rgba(255, 255, 255, 0.1);
    border-radius: 10px;
    padding: 10px;
@@ -186,6 +191,13 @@ const handleDownload = async (fileType, close) => {
 
       svg {
          display: block;
+      }
+
+      span {
+         margin-left: 0.5rem;
+         @media (max-width: $screen-sm) {
+            display: none;
+         }
       }
    }
 

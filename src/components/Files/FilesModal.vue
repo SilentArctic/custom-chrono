@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import { VueFinalModal } from 'vue-final-modal';
 import { useToast } from 'vue-toast-notification';
 import { useCardStore } from '@/stores/card.store';
@@ -21,10 +21,26 @@ const newFolderName = ref('');
 const showFileInput = ref(false);
 const newFileName = ref('');
 
+const folderNameRef = ref(null);
+watchEffect(() => {
+   if (folderNameRef.value) folderNameRef.value.focus();
+});
+
+const fileNameRef = ref(null);
+watchEffect(() => {
+   if (fileNameRef.value) fileNameRef.value.focus();
+});
+
 const isAtRoot = computed(() => currentFolderId.value === null);
-const currentFolder = computed(() => filesStore.folders.find((f) => f.id === currentFolderId.value) ?? null);
-const visibleFiles = computed(() => filesStore.files.filter((f) => f.folderId === currentFolderId.value));
-const rootFiles = computed(() => filesStore.files.filter((f) => f.folderId === null));
+const currentFolder = computed(
+   () => filesStore.folders.find((f) => f.id === currentFolderId.value) ?? null,
+);
+const visibleFiles = computed(() =>
+   filesStore.files.filter((f) => f.folderId === currentFolderId.value),
+);
+const rootFiles = computed(() =>
+   filesStore.files.filter((f) => f.folderId === null),
+);
 
 const enterFolder = (id) => {
    currentFolderId.value = id;
@@ -47,7 +63,7 @@ const toggleFolderInput = () => {
 const toggleFileInput = () => {
    showFileInput.value = !showFileInput.value;
    showFolderInput.value = false;
-   newFileName.value = showFileInput.value ? (cardStore.cards[0].name || '') : '';
+   newFileName.value = showFileInput.value ? cardStore.cards[0].name || '' : '';
 };
 
 const handleCreateFolder = async () => {
@@ -61,7 +77,11 @@ const handleCreateFolder = async () => {
 const handleSaveFile = async () => {
    const name = newFileName.value.trim();
    if (!name) return;
-   await filesStore.saveFile(name, buildCardParams(cardStore), currentFolderId.value);
+   await filesStore.saveFile(
+      name,
+      buildCardParams(cardStore),
+      currentFolderId.value,
+   );
    newFileName.value = '';
    showFileInput.value = false;
    $toast.success('File saved!');
@@ -89,7 +109,11 @@ const handleDeleteFile = async (file) => {
 };
 
 const formatDate = (ts) =>
-   new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+   new Date(ts).toLocaleDateString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+   });
 
 const isEmpty = computed(() =>
    isAtRoot.value
@@ -116,10 +140,14 @@ const isEmpty = computed(() =>
                class="breadcrumb-item"
                :class="{ active: isAtRoot }"
                @click="goToRoot"
-            >All Files</span>
+            >
+               All Files
+            </span>
             <template v-if="!isAtRoot">
                <span class="breadcrumb-sep">›</span>
-               <span class="breadcrumb-item active">{{ currentFolder?.name }}</span>
+               <span class="breadcrumb-item active">
+                  {{ currentFolder?.name }}
+               </span>
             </template>
          </nav>
 
@@ -128,19 +156,18 @@ const isEmpty = computed(() =>
                v-if="isAtRoot"
                class="action-btn"
                @click="toggleFolderInput"
-            >+ Create Folder</button>
-            <button
-               class="action-btn"
-               @click="toggleFileInput"
-            >+ Save File</button>
-            <button
-               class="action-btn new-btn"
-               @click="handleNew"
-            >+ New</button>
+            >
+               + Create Folder
+            </button>
+            <button class="action-btn" @click="toggleFileInput">
+               + Save File
+            </button>
+            <button class="action-btn new-btn" @click="handleNew">+ New</button>
          </div>
 
          <div v-if="showFolderInput" class="inline-input-row">
             <input
+               ref="folderNameRef"
                v-model="newFolderName"
                placeholder="Folder name..."
                autofocus
@@ -153,6 +180,7 @@ const isEmpty = computed(() =>
 
          <div v-if="showFileInput" class="inline-input-row">
             <input
+               ref="fileNameRef"
                v-model="newFileName"
                placeholder="File name..."
                autofocus
@@ -165,7 +193,7 @@ const isEmpty = computed(() =>
 
          <div class="files-list">
             <p v-if="isEmpty" class="empty-state">
-               <template v-if="isAtRoot">No saved files yet. Hit "+ Save File" to save your current card.</template>
+               <template v-if="isAtRoot">No saved files.</template>
                <template v-else>This folder is empty.</template>
             </p>
 
@@ -176,9 +204,22 @@ const isEmpty = computed(() =>
                   class="list-row folder-row"
                >
                   <span class="row-icon">📁</span>
-                  <span class="row-name" @click="enterFolder(folder.id)">{{ folder.name }}</span>
-                  <span class="row-meta">{{ filesStore.files.filter((f) => f.folderId === folder.id).length }} files</span>
-                  <button class="delete-btn" @click="handleDeleteFolder(folder)">✕</button>
+                  <span class="row-name" @click="enterFolder(folder.id)">
+                     {{ folder.name }}
+                  </span>
+                  <span class="row-meta">
+                     {{
+                        filesStore.files.filter((f) => f.folderId === folder.id)
+                           .length
+                     }}
+                     files
+                  </span>
+                  <button
+                     class="delete-btn"
+                     @click="handleDeleteFolder(folder)"
+                  >
+                     ✕
+                  </button>
                </div>
 
                <div
@@ -187,9 +228,13 @@ const isEmpty = computed(() =>
                   class="list-row file-row"
                >
                   <span class="row-icon">🗒</span>
-                  <span class="row-name" @click="handleLoadFile(file)">{{ file.name }}</span>
+                  <span class="row-name" @click="handleLoadFile(file)">
+                     {{ file.name }}
+                  </span>
                   <span class="row-meta">{{ formatDate(file.savedAt) }}</span>
-                  <button class="delete-btn" @click="handleDeleteFile(file)">✕</button>
+                  <button class="delete-btn" @click="handleDeleteFile(file)">
+                     ✕
+                  </button>
                </div>
             </template>
 
@@ -200,9 +245,13 @@ const isEmpty = computed(() =>
                   class="list-row file-row"
                >
                   <span class="row-icon">🗒</span>
-                  <span class="row-name" @click="handleLoadFile(file)">{{ file.name }}</span>
+                  <span class="row-name" @click="handleLoadFile(file)">{{
+                     file.name
+                  }}</span>
                   <span class="row-meta">{{ formatDate(file.savedAt) }}</span>
-                  <button class="delete-btn" @click="handleDeleteFile(file)">✕</button>
+                  <button class="delete-btn" @click="handleDeleteFile(file)">
+                     ✕
+                  </button>
                </div>
             </template>
          </div>

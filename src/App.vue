@@ -56,9 +56,15 @@ html {
    max-height: 100vh;
    width: 100%;
    max-width: 100%;
-   background: radial-gradient(ellipse at top, rgba($blue, 0.6) 0%, transparent 55%),
-      radial-gradient(ellipse at bottom right, rgba($red, 0.4) 0%, transparent 55%), $bg-dark;
-   font-family: "Montserrat", sans-serif;
+   background:
+      radial-gradient(ellipse at top, rgba($blue, 0.6) 0%, transparent 55%),
+      radial-gradient(
+         ellipse at bottom right,
+         rgba($red, 0.4) 0%,
+         transparent 55%
+      ),
+      $bg-dark;
+   font-family: 'Montserrat', sans-serif;
    font-optical-sizing: auto;
    color: white;
    overflow: hidden;
