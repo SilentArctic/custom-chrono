@@ -3,7 +3,7 @@ import { onMounted } from 'vue';
 import { ModalsContainer } from 'vue-final-modal';
 import Share from './components/Share/Share.vue';
 import EditBar from './components/EditBar/EditBar.vue';
-import Cards from './components/Cards/Cards.vue';
+import Preview from './components/Preview/Preview.vue';
 import Copyright from './components/Copyright.vue';
 import { useCardStore } from './stores/card.store';
 
@@ -22,7 +22,7 @@ onMounted(() => {
       <div class="body">
          <Share />
          <EditBar />
-         <Cards />
+         <Preview />
          <Copyright />
       </div>
    </main>

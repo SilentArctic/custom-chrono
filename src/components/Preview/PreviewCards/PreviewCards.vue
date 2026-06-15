@@ -1,8 +1,8 @@
 <script setup>
-import { ref, computed } from "vue";
-import Card from "./Card.vue";
-import { useCardStore } from "@/stores/card.store";
-import * as CardTypes from "@/constants/cardTypes.constants";
+import { ref, computed } from 'vue';
+import PreviewCard from './PreviewCard.vue';
+import { useCardStore } from '@/stores/card.store';
+import * as CardTypes from '@/constants/creatorTypes.js';
 
 const cardStore = useCardStore();
 
@@ -30,7 +30,7 @@ const mobilePos = computed(() => {
    >
       <div id="print-wrapper-all" class="print-wrapper-all">
          <div id="print-wrapper-0" class="print-wrapper-card">
-            <Card
+            <PreviewCard
                v-bind="cardStore.cards[0]"
                :cardType="cardStore.cardType"
                :syndicate="cardStore.syndicate"
@@ -43,7 +43,7 @@ const mobilePos = computed(() => {
             id="print-wrapper-1"
             class="print-wrapper-card"
          >
-            <Card
+            <PreviewCard
                v-bind="cardStore.cards[1]"
                :cardType="cardStore.cardType"
                :syndicate="cardStore.syndicate"

@@ -1,14 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useCardStore } from '@/stores/card.store';
-import * as CardTypes from '@/constants/cardTypes.constants';
-import * as Syndicates from '@/constants/syndicates.constants';
-import * as Rarities from '@/constants/rarities.constants';
-import { BaseHr, BaseSelect } from '../common';
-import EditBarCardStats from './EditBarCardStats.vue';
+import * as CreatorTypes from '@/constants/creatorTypes';
+import { BaseSelect } from '../common';
+import EditBarCards from './EditBarCards.vue';
 
 const isMobileLow = ref(true);
 const cardStore = useCardStore();
+
+const isCards = computed(() => CreatorTypes.Cards.includes(cardStore.cardType));
 </script>
 
 <template>
@@ -23,55 +23,12 @@ const cardStore = useCardStore();
          :value="cardStore.cardType"
          @input="cardStore.setCardType($event.target.value)"
       >
-         <option v-for="cType in CardTypes" :key="cType" :value="cType">
+         <option v-for="cType in CreatorTypes.ALL" :key="cType" :value="cType">
             {{ cType }}
          </option>
       </BaseSelect>
 
-      <BaseSelect
-         name="syndicate"
-         class="top-select"
-         :value="cardStore.syndicate"
-         @input="cardStore.setSyndicate($event.target.value)"
-      >
-         <option value="">Choose a Syndicate...</option>
-         <option
-            v-for="syndicate in Syndicates"
-            :key="syndicate"
-            :value="syndicate"
-         >
-            {{ syndicate }}
-         </option>
-      </BaseSelect>
-
-      <BaseSelect
-         name="rarity"
-         :value="cardStore.rarity"
-         @input="cardStore.setRarity($event.target.value)"
-      >
-         <option v-for="rarity in Rarities.ALL" :key="rarity" :value="rarity">
-            {{ rarity }}
-         </option>
-      </BaseSelect>
-
-      <BaseHr />
-
-      <EditBarCardStats
-         :cardType="cardStore.cardType"
-         :card="cardStore.cards[0]"
-         @updateValue="(name, val) => cardStore.setValue(0, name, val)"
-         @updateArtPos="(name, val) => cardStore.setArtPos(0, name, val)"
-      />
-
-      <div v-if="cardStore.cardType === CardTypes.AGENT">
-         <BaseHr />
-         <EditBarCardStats
-            :cardType="cardStore.cardType"
-            :card="cardStore.cards[1]"
-            @updateValue="(name, val) => cardStore.setValue(1, name, val)"
-            @updateArtPos="(name, val) => cardStore.setArtPos(1, name, val)"
-         />
-      </div>
+      <EditBarCards v-if="isCards" />
    </div>
 </template>
 

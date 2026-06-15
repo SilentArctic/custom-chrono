@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import cloneDeep from 'lodash/cloneDeep';
 import * as ActionSpeeds from '../constants/actionSpeeds.constants';
-import * as CardTypes from '../constants/cardTypes.constants';
+import * as CardTypes from '../constants/creatorTypes';
 import * as Rarities from '../constants/rarities.constants';
 
 const agentState = {
@@ -71,11 +71,7 @@ export const useCardStore = defineStore('card', {
                         this.cards[i].artPos[name] = Number(position);
                      });
                   } else {
-                     const nums = [
-                        'cost',
-                        'strength',
-                        'durability',
-                     ];
+                     const nums = ['cost', 'strength', 'durability'];
                      this.cards[i][statName] = nums.includes(statName)
                         ? Number(cardValue)
                         : cardValue;

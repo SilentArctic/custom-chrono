@@ -9,7 +9,7 @@ import {
    nextTick,
 } from 'vue';
 import VanillaTilt from 'vanilla-tilt';
-import * as CardTypes from '@/constants/cardTypes.constants';
+import * as CardTypes from '@/constants/creatorTypes';
 import { transformDescription } from '@/utils';
 
 const props = defineProps({

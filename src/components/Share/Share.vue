@@ -4,7 +4,7 @@ import * as htmlToImage from 'html-to-image';
 import Popper from 'vue3-popper';
 import { useToast } from 'vue-toast-notification';
 import { useCardStore } from '@/stores/card.store';
-import * as CardTypes from '@/constants/cardTypes.constants';
+import * as CardTypes from '@/constants/creatorTypes.js';
 import { buildCardParams } from '@/utils/serializeState';
 import ShareHelpModal from './ShareHelpModal.vue';
 import FilesModal from '@/components/Files/FilesModal.vue';
@@ -23,7 +23,9 @@ const { open: openFiles, close: closeFiles } = useModal({
 });
 
 const handleShare = () => {
-   navigator.clipboard.writeText(window.location.href + '?' + buildCardParams(cardStore));
+   navigator.clipboard.writeText(
+      window.location.href + '?' + buildCardParams(cardStore),
+   );
    $toast.success('Link copied to clipboard!');
 };
 
@@ -32,7 +34,7 @@ const handleDownload = async (fileType, close) => {
 
    /* Target render width per card so PNG output is consistent and crisp
       regardless of how large the card is displayed on the user's screen. */
-      const TARGET_CARD_WIDTH = 940;
+   const TARGET_CARD_WIDTH = 940;
 
    const downloadMethod =
       fileType === 'svg' ? 'toSvg' : fileType === 'png' && 'toPng';
@@ -64,13 +66,24 @@ const handleDownload = async (fileType, close) => {
       if (id === cardsWrapperId && fileType === 'png') {
          const node0 = document.getElementById('print-wrapper-0');
          const node1 = document.getElementById('print-wrapper-1');
-         const pr = Math.max(window.devicePixelRatio, TARGET_CARD_WIDTH / node0.offsetWidth);
-         const captureOpts = { filter: (n) => !n.classList?.contains('spacer'), pixelRatio: pr };
+         const pr = Math.max(
+            window.devicePixelRatio,
+            TARGET_CARD_WIDTH / node0.offsetWidth,
+         );
+         const captureOpts = {
+            filter: (n) => !n.classList?.contains('spacer'),
+            pixelRatio: pr,
+         };
          const [url0, url1] = await Promise.all([
             htmlToImage.toPng(node0, captureOpts),
             htmlToImage.toPng(node1, captureOpts),
          ]);
-         const loadImg = (url) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = url; });
+         const loadImg = (url) =>
+            new Promise((res) => {
+               const i = new Image();
+               i.onload = () => res(i);
+               i.src = url;
+            });
          const [img0, img1] = await Promise.all([loadImg(url0), loadImg(url1)]);
          const gap = Math.round(16 * pr); // 1rem gap scaled to output resolution
          const canvas = document.createElement('canvas');
@@ -113,20 +126,40 @@ const handleDownload = async (fileType, close) => {
 <template>
    <div class="share">
       <button title="Share" @click="handleShare">
-         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-            <polyline points="16 6 12 2 8 6"/>
-            <line x1="12" y1="2" x2="12" y2="15"/>
+         <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+         >
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+            <polyline points="16 6 12 2 8 6" />
+            <line x1="12" y1="2" x2="12" y2="15" />
          </svg>
          <span>Share</span>
       </button>
 
       <Popper arrow>
          <button title="Download">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-               <polyline points="7 10 12 15 17 10"/>
-               <line x1="12" y1="15" x2="12" y2="3"/>
+            <svg
+               width="18"
+               height="18"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+               aria-hidden="true"
+            >
+               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+               <polyline points="7 10 12 15 17 10" />
+               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>Download</span>
          </button>
@@ -143,17 +176,39 @@ const handleDownload = async (fileType, close) => {
       </Popper>
 
       <button title="Files" @click="openFiles">
-         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+         <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+         >
+            <path
+               d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+            />
          </svg>
          <span>Files</span>
       </button>
 
       <button title="Help" @click="openHelp">
-         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
+         <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+         >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
          </svg>
          <span>Help</span>
       </button>

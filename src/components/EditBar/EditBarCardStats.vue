@@ -1,5 +1,5 @@
 <script setup>
-import * as CardTypes from '@/constants/cardTypes.constants';
+import * as CardTypes from '@/constants/creatorTypes.js';
 import EditBarArtSlider from './EditBarArtSlider.vue';
 import { BaseInput } from '../common';
 import BaseSelect from '../common/BaseSelect.vue';
