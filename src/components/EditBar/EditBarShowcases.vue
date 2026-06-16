@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useShowcaseStore } from '@/stores/showcase.store';
 import { useFilesStore } from '@/stores/files.store';
 import { BaseInput, BaseSelect, BaseHr } from '../common';
@@ -9,6 +9,17 @@ const showcaseStore = useShowcaseStore();
 const filesStore = useFilesStore();
 
 onMounted(() => filesStore.load());
+
+const filesByFolder = computed(() => {
+   const groups = [];
+   for (const folder of filesStore.folders) {
+      const files = filesStore.files.filter((f) => f.folderId === folder.id).sort((a, b) => a.name.localeCompare(b.name));
+      if (files.length) groups.push({ folder, files });
+   }
+   const unfoldered = filesStore.files.filter((f) => !f.folderId).sort((a, b) => a.name.localeCompare(b.name));
+   if (unfoldered.length) groups.push({ folder: null, files: unfoldered });
+   return groups;
+});
 
 const handleValue = ({ target: { name, value } }) => {
    showcaseStore.setValue(name, value);
@@ -93,9 +104,12 @@ const handleRange = ({ target: { name, value } }) => {
       @input="handleValue"
    >
       <option value="">Choose an example card...</option>
-      <option v-for="file in filesStore.files" :key="file.id" :value="file.id">
-         {{ file.name }}
-      </option>
+      <template v-for="group in filesByFolder" :key="group.folder?.id ?? 'unfoldered'">
+         <option disabled>{{ group.folder ? `— ${group.folder.name} —` : '— No Folder —' }}</option>
+         <option v-for="file in group.files" :key="file.id" :value="file.id">
+            {{ file.name }}
+         </option>
+      </template>
    </BaseSelect>
 </template>
 
