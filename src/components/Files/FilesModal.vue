@@ -3,15 +3,22 @@ import { ref, computed, onMounted, watchEffect } from 'vue';
 import { VueFinalModal } from 'vue-final-modal';
 import { useToast } from 'vue-toast-notification';
 import { useCardStore } from '@/stores/card.store';
+import { useShowcaseStore } from '@/stores/showcase.store';
 import { useFilesStore } from '@/stores/files.store';
-import { buildCardParams } from '@/utils/serializeState';
+import { buildParams, applyParams } from '@/utils/serializeState';
+import * as CreatorTypes from '@/constants/creatorTypes';
 import { BaseHr } from '../common';
 
 const emit = defineEmits(['close']);
 
 const cardStore = useCardStore();
+const showcaseStore = useShowcaseStore();
 const filesStore = useFilesStore();
 const $toast = useToast();
+
+const isShowcase = computed(() =>
+   CreatorTypes.Showcases.includes(cardStore.cardType),
+);
 
 onMounted(() => filesStore.load());
 
@@ -63,7 +70,17 @@ const toggleFolderInput = () => {
 const toggleFileInput = () => {
    showFileInput.value = !showFileInput.value;
    showFolderInput.value = false;
-   newFileName.value = showFileInput.value ? cardStore.cards[0].name || '' : '';
+
+   let defaultName = '';
+   if (isShowcase.value)
+      defaultName = `${showcaseStore.header} - ${showcaseStore.name}`;
+   else {
+      defaultName = cardStore.cards[0].name;
+      if (cardStore.cards[1].name)
+         defaultName += ` + ${cardStore.cards[1].name}`;
+   }
+
+   newFileName.value = showFileInput.value ? defaultName || '' : '';
 };
 
 const handleCreateFolder = async () => {
@@ -79,7 +96,7 @@ const handleSaveFile = async () => {
    if (!name) return;
    await filesStore.saveFile(
       name,
-      buildCardParams(cardStore),
+      buildParams(cardStore, showcaseStore),
       currentFolderId.value,
    );
    newFileName.value = '';
@@ -89,11 +106,12 @@ const handleSaveFile = async () => {
 
 const handleNew = () => {
    cardStore.reset();
+   showcaseStore.reset();
    emit('close');
 };
 
 const handleLoadFile = (file) => {
-   cardStore.setFromParams(new URLSearchParams(file.params));
+   applyParams(new URLSearchParams(file.params), { cardStore, showcaseStore });
    $toast.success(`Loaded "${file.name}"`);
    emit('close');
 };
@@ -152,17 +170,19 @@ const isEmpty = computed(() =>
          </nav>
 
          <div class="files-actions">
-            <button
-               v-if="isAtRoot"
-               class="action-btn"
-               @click="toggleFolderInput"
-            >
-               + Create Folder
-            </button>
-            <button class="action-btn" @click="toggleFileInput">
-               + Save File
-            </button>
-            <button class="action-btn new-btn" @click="handleNew">+ New</button>
+            <span>
+               <button
+                  v-if="isAtRoot"
+                  class="action-btn"
+                  @click="toggleFolderInput"
+               >
+                  + Create Folder
+               </button>
+               <button class="action-btn" @click="toggleFileInput">
+                  + Save File
+               </button>
+            </span>
+            <button class="action-btn" @click="handleNew">+ New Project</button>
          </div>
 
          <div v-if="showFolderInput" class="inline-input-row">
@@ -245,9 +265,9 @@ const isEmpty = computed(() =>
                   class="list-row file-row"
                >
                   <span class="row-icon">🗒</span>
-                  <span class="row-name" @click="handleLoadFile(file)">{{
-                     file.name
-                  }}</span>
+                  <span class="row-name" @click="handleLoadFile(file)">
+                     {{ file.name }}
+                  </span>
                   <span class="row-meta">{{ formatDate(file.savedAt) }}</span>
                   <button class="delete-btn" @click="handleDeleteFile(file)">
                      ✕
@@ -312,10 +332,11 @@ const isEmpty = computed(() =>
 
 .files-actions {
    display: flex;
-   gap: 0.5rem;
+   justify-content: space-between;
 
-   .new-btn {
-      margin-left: auto;
+   span {
+      display: flex;
+      gap: 0.5rem;
    }
 
    .action-btn {

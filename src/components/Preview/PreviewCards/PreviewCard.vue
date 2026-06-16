@@ -32,12 +32,12 @@ const props = defineProps({
 });
 
 const rarityIcon = computed(
-   () => new URL(`../../assets/rarity_${props.rarity}.webp`, import.meta.url),
+   () => new URL(`../../../assets/rarity_${props.rarity}.webp`, import.meta.url),
 );
 
 const syndicateIcon = computed(() => {
    if (!props.syndicate) return '';
-   return new URL(`../../assets/${props.syndicate}.webp`, import.meta.url);
+   return new URL(`../../../assets/${props.syndicate}.webp`, import.meta.url);
 });
 
 const transformedDescription = computed(() =>
@@ -54,9 +54,9 @@ const artStyle = computed(() => {
 
 const costIcon = computed(() =>
    props.cardType === CardTypes.AGENT
-      ? new URL('../../assets/power_cost.webp', import.meta.url)
+      ? new URL('../../../assets/power_cost.webp', import.meta.url)
       : new URL(
-           `../../assets/power_cost_${props.actionSpeed}.webp`,
+           `../../../assets/power_cost_${props.actionSpeed}.webp`,
            import.meta.url,
         ),
 );
@@ -151,7 +151,7 @@ watchEffect(() => {
       />
 
       <img
-         src="../../assets/card_frame.webp"
+         src="../../../assets/card_frame.webp"
          class="card-frame"
          alt="Card frame"
       />
@@ -165,7 +165,7 @@ watchEffect(() => {
          {{ actionSpeed }}
          <img
             v-if="actionSpeed !== 'immediate'"
-            src="../../assets/chain.webp"
+            src="../../../assets/chain.webp"
             alt="chain symbol"
          />
       </div>
@@ -173,7 +173,7 @@ watchEffect(() => {
       <div class="desc_box">
          <div class="desc-shade" />
          <img
-            src="../../assets/desc_box.webp"
+            src="../../../assets/desc_box.webp"
             alt="description-image"
             title="description-image"
          />
@@ -198,7 +198,7 @@ watchEffect(() => {
       <img :src="rarityIcon" class="rarity-icon" alt="Rarity icon" />
 
       <div v-if="cardType === CardTypes.AGENT" class="agent-stats">
-         <img src="../../assets/agent_stats.webp" />
+         <img src="../../../assets/agent_stats.webp" />
          <div class="strength">{{ strength }}</div>
          <div class="durability">{{ durability }}</div>
       </div>

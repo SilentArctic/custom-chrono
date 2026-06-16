@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import cloneDeep from 'lodash/cloneDeep';
 import * as ActionSpeeds from '../constants/actionSpeeds.constants';
 import * as CardTypes from '../constants/creatorTypes';
 import * as Rarities from '../constants/rarities.constants';
+import { parseCardParams } from '../utils/serializeState';
 
-const agentState = {
+export const createCard = () => ({
    name: '',
    art: '',
    artCredit: '',
@@ -15,14 +15,14 @@ const agentState = {
    durability: 0,
    actionSpeed: ActionSpeeds.IMMEDIATE,
    rarity: Rarities.COMMON,
-};
+});
 
 export const useCardStore = defineStore('card', {
    state: () => ({
       cardType: CardTypes.AGENT,
       syndicate: '',
       rarity: Rarities.COMMON,
-      cards: [cloneDeep(agentState), cloneDeep(agentState)],
+      cards: [createCard(), createCard()],
    }),
 
    actions: {
@@ -50,41 +50,23 @@ export const useCardStore = defineStore('card', {
          this.cardType = CardTypes.AGENT;
          this.syndicate = '';
          this.rarity = Rarities.COMMON;
-         this.cards = [cloneDeep(agentState), cloneDeep(agentState)];
+         this.cards = [createCard(), createCard()];
       },
 
       setFromParams(params) {
          if (!params.size) return;
 
-         for (const [statName, value] of params) {
-            const decodedValue = decodeURIComponent(value);
-            if (!decodedValue) continue;
-            else if (statName === 'cardType') this.cardType = decodedValue;
-            else if (statName === 'syndicate') this.syndicate = decodedValue;
-            else if (statName === 'rarity') this.rarity = decodedValue;
-            else {
-               decodedValue.split(';').forEach((cardValue, i) => {
-                  if (statName === 'artPos') {
-                     /* assign artPos values */
-                     cardValue.split(',').forEach((coord) => {
-                        const [name, position] = coord.split(':');
-                        this.cards[i].artPos[name] = Number(position);
-                     });
-                  } else {
-                     const nums = ['cost', 'strength', 'durability'];
-                     this.cards[i][statName] = nums.includes(statName)
-                        ? Number(cardValue)
-                        : cardValue;
-                  }
-               });
-            }
-         }
+         const { cardType, syndicate, rarity, cards } = parseCardParams(params);
+         this.cardType = cardType;
+         this.syndicate = syndicate;
+         this.rarity = rarity;
+         this.cards = cards;
 
          /* clear url to prevent confusion (live changes are not reflected in url) */
          window.history.replaceState(
             null,
             null,
-            new URL(window.location.origin),
+            window.location.origin + window.location.pathname,
          );
       },
    },

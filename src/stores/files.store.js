@@ -5,6 +5,7 @@ const DB_NAME = 'custom-chrono';
 const DB_VERSION = 1;
 
 let _db = null;
+let _loadPromise = null;
 
 async function getDb() {
    if (_db) return _db;
@@ -27,10 +28,14 @@ export const useFilesStore = defineStore('files', {
    actions: {
       async load() {
          if (this.loaded) return;
-         const db = await getDb();
-         this.folders = await db.getAll('folders');
-         this.files = await db.getAll('files');
-         this.loaded = true;
+         if (_loadPromise) return _loadPromise;
+         _loadPromise = (async () => {
+            const db = await getDb();
+            this.folders = await db.getAll('folders');
+            this.files = await db.getAll('files');
+            this.loaded = true;
+         })();
+         return _loadPromise;
       },
       async createFolder(name) {
          const folder = { id: crypto.randomUUID(), name };

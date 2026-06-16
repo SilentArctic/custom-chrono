@@ -6,12 +6,16 @@ import EditBar from './components/EditBar/EditBar.vue';
 import Preview from './components/Preview/Preview.vue';
 import Copyright from './components/Copyright.vue';
 import { useCardStore } from './stores/card.store';
+import { useShowcaseStore } from './stores/showcase.store';
+import { applyParams } from './utils/serializeState';
 
 const cardStore = useCardStore();
+const showcaseStore = useShowcaseStore();
 
 onMounted(() => {
    const params = new URLSearchParams(window.location.search);
-   cardStore.setFromParams(params);
+   if (!params.size) return;
+   applyParams(params, { cardStore, showcaseStore });
 });
 </script>
 

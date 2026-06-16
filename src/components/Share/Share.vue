@@ -1,16 +1,19 @@
 <script setup>
+import { computed } from 'vue';
 import { useModal } from 'vue-final-modal';
 import * as htmlToImage from 'html-to-image';
 import Popper from 'vue3-popper';
 import { useToast } from 'vue-toast-notification';
 import { useCardStore } from '@/stores/card.store';
+import { useShowcaseStore } from '@/stores/showcase.store';
 import * as CardTypes from '@/constants/creatorTypes.js';
-import { buildCardParams } from '@/utils/serializeState';
+import { buildParams } from '@/utils/serializeState';
 import ShareHelpModal from './ShareHelpModal.vue';
 import FilesModal from '@/components/Files/FilesModal.vue';
 
 const $toast = useToast();
 const cardStore = useCardStore();
+const showcaseStore = useShowcaseStore();
 
 const { open: openHelp, close: closeHelp } = useModal({
    component: ShareHelpModal,
@@ -24,20 +27,43 @@ const { open: openFiles, close: closeFiles } = useModal({
 
 const handleShare = () => {
    navigator.clipboard.writeText(
-      window.location.href + '?' + buildCardParams(cardStore),
+      window.location.href + '?' + buildParams(cardStore, showcaseStore),
    );
    $toast.success('Link copied to clipboard!');
 };
 
+const isShowcase = computed(() =>
+   CardTypes.Showcases.includes(cardStore.cardType),
+);
+
 const handleDownload = async (fileType, close) => {
    close();
+
+   const downloadMethod =
+      fileType === 'svg' ? 'toSvg' : fileType === 'png' && 'toPng';
+
+   if (isShowcase.value) {
+      const node = document.getElementById('showcase-print-wrapper');
+      if (!node) return;
+      const TARGET_WIDTH = 1920;
+      const pixelRatio = Math.max(
+         window.devicePixelRatio,
+         TARGET_WIDTH / node.offsetWidth,
+      );
+      const fileName = `${showcaseStore.name || 'showcase'} - ${showcaseStore.header || 'feature'}.${fileType}`;
+      const dataUrl = await htmlToImage[downloadMethod](node, {
+         ...(fileType === 'png' && { pixelRatio }),
+      });
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = dataUrl;
+      link.click();
+      return;
+   }
 
    /* Target render width per card so PNG output is consistent and crisp
       regardless of how large the card is displayed on the user's screen. */
    const TARGET_CARD_WIDTH = 940;
-
-   const downloadMethod =
-      fileType === 'svg' ? 'toSvg' : fileType === 'png' && 'toPng';
 
    const ids = [
       'print-wrapper-0',

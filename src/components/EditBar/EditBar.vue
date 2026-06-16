@@ -4,11 +4,15 @@ import { useCardStore } from '@/stores/card.store';
 import * as CreatorTypes from '@/constants/creatorTypes';
 import { BaseSelect } from '../common';
 import EditBarCards from './EditBarCards.vue';
+import EditBarShowcases from './EditBarShowcases.vue';
 
 const isMobileLow = ref(true);
 const cardStore = useCardStore();
 
 const isCards = computed(() => CreatorTypes.Cards.includes(cardStore.cardType));
+const isShowcase = computed(() =>
+   CreatorTypes.Showcases.includes(cardStore.cardType),
+);
 </script>
 
 <template>
@@ -29,6 +33,7 @@ const isCards = computed(() => CreatorTypes.Cards.includes(cardStore.cardType));
       </BaseSelect>
 
       <EditBarCards v-if="isCards" />
+      <EditBarShowcases v-else-if="isShowcase" />
    </div>
 </template>
 

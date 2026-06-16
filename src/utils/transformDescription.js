@@ -11,7 +11,7 @@ const replacers = {
 
 const styles = {
    reference: "color: #8a8fc1",
-   keyword: "color: #f1cf57",
+   keyword: "color: #f6d259",
    timeline: "color: #7ed1f5",
    italic: "font-style: italic",
    bold: "font-weight: 600",
