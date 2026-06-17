@@ -55,9 +55,15 @@ const handleDownload = async (fileType, close) => {
       const fileName = isCollection
          ? `${showcaseStore.name || 'collection'}.${fileType}`
          : `${showcaseStore.name || 'showcase'} - ${showcaseStore.header || 'feature'}.${fileType}`;
-      const dataUrl = await htmlToImage[downloadMethod](node, {
-         ...(fileType === 'png' && { pixelRatio }),
-      });
+      node.classList.add('export-flatten');
+      let dataUrl;
+      try {
+         dataUrl = await htmlToImage[downloadMethod](node, {
+            ...(fileType === 'png' && { pixelRatio }),
+         });
+      } finally {
+         node.classList.remove('export-flatten');
+      }
       const link = document.createElement('a');
       link.download = fileName;
       link.href = dataUrl;
@@ -104,10 +110,18 @@ const handleDownload = async (fileType, close) => {
             filter: (n) => !n.classList?.contains('spacer'),
             pixelRatio: pr,
          };
-         const [url0, url1] = await Promise.all([
-            htmlToImage.toPng(node0, captureOpts),
-            htmlToImage.toPng(node1, captureOpts),
-         ]);
+         node0.classList.add('export-flatten');
+         node1.classList.add('export-flatten');
+         let url0, url1;
+         try {
+            [url0, url1] = await Promise.all([
+               htmlToImage.toPng(node0, captureOpts),
+               htmlToImage.toPng(node1, captureOpts),
+            ]);
+         } finally {
+            node0.classList.remove('export-flatten');
+            node1.classList.remove('export-flatten');
+         }
          const loadImg = (url) =>
             new Promise((res) => {
                const i = new Image();
@@ -141,10 +155,16 @@ const handleDownload = async (fileType, close) => {
          targetWidth / node.offsetWidth,
       );
 
-      const dataUrl = await htmlToImage[downloadMethod](node, {
-         filter: (node) => !node.classList?.contains('spacer'),
-         ...(fileType === 'png' && { pixelRatio }),
-      });
+      node.classList.add('export-flatten');
+      let dataUrl;
+      try {
+         dataUrl = await htmlToImage[downloadMethod](node, {
+            filter: (node) => !node.classList?.contains('spacer'),
+            ...(fileType === 'png' && { pixelRatio }),
+         });
+      } finally {
+         node.classList.remove('export-flatten');
+      }
       const link = document.createElement('a');
       link.download = fileName;
       link.href = dataUrl;
