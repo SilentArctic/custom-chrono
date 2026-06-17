@@ -86,6 +86,7 @@ export function buildShowcaseParams(cardType, showcaseStore) {
       backgroundPos,
       exampleFileId,
       collectionFileIds,
+      collectionPositions,
    } = showcaseStore;
    const params = {
       cardType,
@@ -102,6 +103,8 @@ export function buildShowcaseParams(cardType, showcaseStore) {
       params.collectionFileIds = encodeURIComponent(
          collectionFileIds.join(','),
       );
+      if (collectionPositions.some(Boolean))
+         params.collectionPositions = encodeURIComponent(collectionPositions.join(','));
    } else {
       params.exampleFileId = encodeURIComponent(exampleFileId);
    }
@@ -118,6 +121,7 @@ export function parseShowcaseParams(params) {
       backgroundPos: { x: 0, y: 0, z: 0, r: 0 },
       exampleFileId: '',
       collectionFileIds: Array(CreatorTypes.COLLECTION_SLOTS_INITIAL).fill(''),
+      collectionPositions: Array(CreatorTypes.COLLECTION_SLOTS_INITIAL).fill(''),
    };
    for (const [key, value] of params) {
       const decoded = decodeURIComponent(value);
@@ -132,6 +136,11 @@ export function parseShowcaseParams(params) {
             .split(',')
             .slice(0, CreatorTypes.COLLECTION_SLOTS_MAX);
          state.collectionFileIds = ids;
+      } else if (key === 'collectionPositions') {
+         const positions = decoded
+            .split(',')
+            .slice(0, CreatorTypes.COLLECTION_SLOTS_MAX);
+         state.collectionPositions = positions;
       } else if (key in state) {
          state[key] = decoded;
       }

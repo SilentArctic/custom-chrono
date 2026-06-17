@@ -1,5 +1,5 @@
 <script setup>
-import { BaseInput, BaseHr } from '../common';
+import { BaseInput, BaseHr, BaseSelect } from '../common';
 import EditBarArtSlider from './EditBarArtSlider.vue';
 import FileSelect from '../Files/FileSelect.vue';
 import { ref } from 'vue';
@@ -93,6 +93,15 @@ const handleFileId = (index, { target }) => {
          class="slot"
       >
          <FileSelect :value="id" @input="handleFileId(i, $event)" />
+         <BaseSelect
+            class="position-select"
+            :value="showcaseStore.collectionPositions[i]"
+            @change="({ target }) => showcaseStore.setCollectionPosition(i, target.value)"
+         >
+            <option value="up">↑</option>
+            <option value="">—</option>
+            <option value="down">↓</option>
+         </BaseSelect>
          <button
             v-if="showcaseStore.collectionFileIds.length > 1"
             class="remove-btn"
@@ -129,6 +138,11 @@ const handleFileId = (index, { target }) => {
          flex: 1;
          min-width: 0;
          margin-bottom: 0;
+      }
+
+      .position-select {
+         flex: 0 0 auto;
+         width: 44px;
       }
    }
 

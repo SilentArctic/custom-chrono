@@ -17,11 +17,13 @@ onMounted(() => filesStore.load());
 /* Map every slot to an entry, keeping blank slots as { empty: true } so a
    deliberately-blank selection reserves an empty space in the centered row. */
 const collectionEntries = computed(() =>
-   showcaseStore.collectionFileIds.map((id) => {
-      if (id === '_blank_') return { empty: true };
+   showcaseStore.collectionFileIds.map((id, i) => {
+      const position = showcaseStore.collectionPositions[i] ?? '';
+
+      if (id === '_blank_') return { empty: true, position };
 
       const file = id && filesStore.files.find((f) => f.id === id);
-      if (!file) return {};
+      if (!file) return { position };
 
       const state = parseCardParams(new URLSearchParams(file.params));
       const isAgent = state.cardType === CardTypes.AGENT;
@@ -32,6 +34,7 @@ const collectionEntries = computed(() =>
          syndicate: state.syndicate,
          rarity: state.rarity,
          isAgent,
+         position,
       };
    }),
 );
@@ -70,7 +73,7 @@ const backgroundStyle = useBackgroundStyle();
                   v-for="(entry, i) in collectionEntries"
                   :key="i"
                   class="card-entry"
-                  :class="{ agent: entry.isAgent }"
+                  :class="{ agent: entry.isAgent, up: entry.position === 'up', down: entry.position === 'down' }"
                >
                   <div v-if="entry.empty" class="card-slot empty-slot" />
                   <div
@@ -233,6 +236,10 @@ const backgroundStyle = useBackgroundStyle();
                align-items: center;
                gap: var(--g-agent);
                min-width: 0;
+               transition: transform 0.3s ease;
+
+               &.up { transform: translateY(-8cqh); }
+               &.down { transform: translateY(8cqh); }
 
                /* Each card's width is the smaller of: the width a 5-up row
                   allows, and the width implied by the row's height (× 3/4).
