@@ -72,8 +72,12 @@ const toggleFileInput = () => {
    showFolderInput.value = false;
 
    let defaultName = '';
-   if (isShowcase.value)
-      defaultName = `${showcaseStore.header} - ${showcaseStore.name}`;
+   if (isShowcase.value) {
+      if (cardStore.cardType === CreatorTypes.COLLECTION)
+         defaultName = `Collection - ${showcaseStore.name}`;
+      else
+         defaultName = `${showcaseStore.header} - ${showcaseStore.name}`;
+   }
    else {
       defaultName = cardStore.cards[0].name;
       if (cardStore.cards[1].name)

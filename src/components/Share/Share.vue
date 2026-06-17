@@ -43,14 +43,18 @@ const handleDownload = async (fileType, close) => {
       fileType === 'svg' ? 'toSvg' : fileType === 'png' && 'toPng';
 
    if (isShowcase.value) {
-      const node = document.getElementById('showcase-print-wrapper');
+      const isCollection = cardStore.cardType === CardTypes.COLLECTION;
+      const nodeId = isCollection ? 'collection-print-wrapper' : 'showcase-print-wrapper';
+      const node = document.getElementById(nodeId);
       if (!node) return;
       const TARGET_WIDTH = 1920;
       const pixelRatio = Math.max(
          window.devicePixelRatio,
          TARGET_WIDTH / node.offsetWidth,
       );
-      const fileName = `${showcaseStore.name || 'showcase'} - ${showcaseStore.header || 'feature'}.${fileType}`;
+      const fileName = isCollection
+         ? `${showcaseStore.name || 'collection'}.${fileType}`
+         : `${showcaseStore.name || 'showcase'} - ${showcaseStore.header || 'feature'}.${fileType}`;
       const dataUrl = await htmlToImage[downloadMethod](node, {
          ...(fileType === 'png' && { pixelRatio }),
       });
