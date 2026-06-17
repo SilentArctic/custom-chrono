@@ -7,3 +7,6 @@ export const COLLECTION = 'collection';
 export const Showcases = [FEATURE, COLLECTION];
 
 export const ALL = [AGENT, ACTION, FEATURE, COLLECTION];
+
+export const COLLECTION_SLOTS_INITIAL = 3;
+export const COLLECTION_SLOTS_MAX = 5;

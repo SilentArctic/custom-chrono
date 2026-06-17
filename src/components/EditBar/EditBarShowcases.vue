@@ -1,33 +1,10 @@
 <script setup>
-import { onMounted, computed } from 'vue';
-import { useShowcaseStore } from '@/stores/showcase.store';
-import { useFilesStore } from '@/stores/files.store';
-import { BaseInput, BaseSelect, BaseHr } from '../common';
+import { BaseInput, BaseHr } from '../common';
 import EditBarArtSlider from './EditBarArtSlider.vue';
+import FileSelect from '../Files/FileSelect.vue';
+import { useShowcaseHandlers } from '@/composables/useShowcaseHandlers';
 
-const showcaseStore = useShowcaseStore();
-const filesStore = useFilesStore();
-
-onMounted(() => filesStore.load());
-
-const filesByFolder = computed(() => {
-   const groups = [];
-   for (const folder of filesStore.folders) {
-      const files = filesStore.files.filter((f) => f.folderId === folder.id).sort((a, b) => a.name.localeCompare(b.name));
-      if (files.length) groups.push({ folder, files });
-   }
-   const unfoldered = filesStore.files.filter((f) => !f.folderId).sort((a, b) => a.name.localeCompare(b.name));
-   if (unfoldered.length) groups.push({ folder: null, files: unfoldered });
-   return groups;
-});
-
-const handleValue = ({ target: { name, value } }) => {
-   showcaseStore.setValue(name, value);
-};
-
-const handleRange = ({ target: { name, value } }) => {
-   showcaseStore.setBackgroundPos(name, value);
-};
+const { showcaseStore, handleValue, handleRange } = useShowcaseHandlers();
 </script>
 
 <template>
@@ -98,19 +75,12 @@ const handleRange = ({ target: { name, value } }) => {
 
    <BaseHr />
 
-   <BaseSelect
+   <FileSelect
       name="exampleFileId"
+      empty-label="Choose an example card..."
       :value="showcaseStore.exampleFileId"
       @input="handleValue"
-   >
-      <option value="">Choose an example card...</option>
-      <template v-for="group in filesByFolder" :key="group.folder?.id ?? 'unfoldered'">
-         <option disabled>{{ group.folder ? `— ${group.folder.name} —` : '— No Folder —' }}</option>
-         <option v-for="file in group.files" :key="file.id" :value="file.id">
-            {{ file.name }}
-         </option>
-      </template>
-   </BaseSelect>
+   />
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { parseShowcaseParams } from '../utils/serializeState';
+import { COLLECTION_SLOTS_INITIAL, COLLECTION_SLOTS_MAX } from '../constants/creatorTypes';
 
 const createShowcase = () => ({
    header: '',
@@ -9,6 +10,7 @@ const createShowcase = () => ({
    background: '',
    backgroundPos: { x: 0, y: 0, z: 0, r: 0 },
    exampleFileId: '',
+   collectionFileIds: Array(COLLECTION_SLOTS_INITIAL).fill(''),
 });
 
 export const useShowcaseStore = defineStore('showcase', {
@@ -21,6 +23,18 @@ export const useShowcaseStore = defineStore('showcase', {
 
       setBackgroundPos(name, value) {
          this.backgroundPos[name] = Number(value);
+      },
+
+      addCollectionSlot() {
+         if (this.collectionFileIds.length < COLLECTION_SLOTS_MAX) this.collectionFileIds.push('');
+      },
+
+      removeCollectionSlot(index) {
+         if (this.collectionFileIds.length > 1) this.collectionFileIds.splice(index, 1);
+      },
+
+      setCollectionFileId(index, id) {
+         this.collectionFileIds[index] = id;
       },
 
       reset() {

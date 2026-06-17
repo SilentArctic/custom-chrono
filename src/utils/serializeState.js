@@ -69,14 +69,24 @@ export function parseCardParams(params) {
    }
 
    /* a single-card type (action) should never carry a stray second card */
-   if (state.cardType !== CreatorTypes.AGENT) state.cards = state.cards.slice(0, 1);
+   if (state.cardType !== CreatorTypes.AGENT)
+      state.cards = state.cards.slice(0, 1);
    if (state.cards.length === 0) state.cards.push(createCard());
 
    return state;
 }
 
 export function buildShowcaseParams(cardType, showcaseStore) {
-   const { header, name, description, artCredit, background, backgroundPos, exampleFileId } = showcaseStore;
+   const {
+      header,
+      name,
+      description,
+      artCredit,
+      background,
+      backgroundPos,
+      exampleFileId,
+      collectionFileIds,
+   } = showcaseStore;
    const params = {
       cardType,
       header: encodeURIComponent(header),
@@ -87,8 +97,14 @@ export function buildShowcaseParams(cardType, showcaseStore) {
       backgroundPos: encodeURIComponent(
          map(backgroundPos, (v, k) => `${k}:${v}`).join(','),
       ),
-      exampleFileId: encodeURIComponent(exampleFileId),
    };
+   if (cardType === CreatorTypes.COLLECTION) {
+      params.collectionFileIds = encodeURIComponent(
+         collectionFileIds.join(','),
+      );
+   } else {
+      params.exampleFileId = encodeURIComponent(exampleFileId);
+   }
    return new URLSearchParams(params).toString();
 }
 
@@ -101,14 +117,21 @@ export function parseShowcaseParams(params) {
       background: '',
       backgroundPos: { x: 0, y: 0, z: 0, r: 0 },
       exampleFileId: '',
+      collectionFileIds: Array(CreatorTypes.COLLECTION_SLOTS_INITIAL).fill(''),
    };
    for (const [key, value] of params) {
       const decoded = decodeURIComponent(value);
       if (key === 'backgroundPos') {
          decoded.split(',').forEach((coord) => {
             const [axis, position] = coord.split(':');
-            if (axis in state.backgroundPos) state.backgroundPos[axis] = Number(position);
+            if (axis in state.backgroundPos)
+               state.backgroundPos[axis] = Number(position);
          });
+      } else if (key === 'collectionFileIds') {
+         const ids = decoded
+            .split(',')
+            .slice(0, CreatorTypes.COLLECTION_SLOTS_MAX);
+         state.collectionFileIds = ids;
       } else if (key in state) {
          state[key] = decoded;
       }
@@ -132,7 +155,11 @@ export function applyParams(params, { cardStore, showcaseStore }) {
       cardStore.setCardType(cardType);
       showcaseStore.setFromParams(params);
       /* clear url to match card.store.setFromParams behaviour */
-      window.history.replaceState(null, null, window.location.origin + window.location.pathname);
+      window.history.replaceState(
+         null,
+         null,
+         window.location.origin + window.location.pathname,
+      );
    } else {
       cardStore.setFromParams(params);
    }

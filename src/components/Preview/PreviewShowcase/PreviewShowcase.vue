@@ -6,6 +6,8 @@ import { parseCardParams } from '@/utils/serializeState';
 import { transformDescription } from '@/utils';
 import * as CardTypes from '@/constants/creatorTypes';
 import PreviewCard from '../PreviewCards/PreviewCard.vue';
+import PreviewCredits from './PreviewCredits.vue';
+import { useBackgroundStyle } from '@/composables/useBackgroundStyle';
 
 const showcaseStore = useShowcaseStore();
 const filesStore = useFilesStore();
@@ -30,13 +32,7 @@ const transformedDescription = computed(() =>
    transformDescription(showcaseStore.description),
 );
 
-const backgroundStyle = computed(() => {
-   const { x, y, z, r } = showcaseStore.backgroundPos;
-   return {
-      transform: `translate(${x / 5}%, ${y / 5}%) rotate(${r}deg)`,
-      scale: 1 + z / 100,
-   };
-});
+const backgroundStyle = useBackgroundStyle();
 </script>
 
 <template>
@@ -87,10 +83,7 @@ const backgroundStyle = computed(() => {
             </p>
          </div>
 
-         <div class="credits">
-            <div class="site">https://customchrono.netlify.app</div>
-            <div v-if="showcaseStore.artCredit" class="art">Art: {{ showcaseStore.artCredit }}</div>
-         </div>
+         <PreviewCredits :art-credit="showcaseStore.artCredit" />
       </div>
    </div>
 </template>
@@ -268,18 +261,6 @@ const backgroundStyle = computed(() => {
          }
       }
 
-      .credits {
-         width: 100%;
-         display: flex;
-         justify-content: space-between;
-         padding: 0 1%;
-         position: absolute;
-         bottom: 1%;
-         z-index: 2;
-         color: rgba(255, 255, 255, 0.6);
-         font-size: clamp(0.55rem, 0.8vw, 0.6rem);
-         text-shadow: 0 0 5px black;
-      }
    }
 }
 </style>
