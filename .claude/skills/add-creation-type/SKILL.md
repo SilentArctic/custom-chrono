@@ -4,6 +4,7 @@ description: Automates adding a new creation type.
 ---
 
 # Context
+
 This skill automates the process of adding a new creation type to the builder. It guides you through setting up the required stores, EditorBar components, and Preview components.
 
 ---
@@ -56,7 +57,11 @@ The user must be able to save and share their work. Url queries are used to hand
 
 Wire up @/components/Files/FilesModal.vue to handle saving the project.
 
-## Step 7: Review
+## Step 7: Downloading
+
+Make sure the user can download their work from the Share bar.
+
+## Step 8: Review
 
 Review the created/modified components and double-check that the data flows from the store to the EditorBar and the Preview correctly.
 
