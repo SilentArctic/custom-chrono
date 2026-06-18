@@ -11,6 +11,7 @@ import {
 import VanillaTilt from 'vanilla-tilt';
 import * as CardTypes from '@/constants/creatorTypes';
 import { transformDescription } from '@/utils';
+import PreviewCredits from '../PreviewCredits.vue';
 
 const props = defineProps({
    cardType: {
@@ -32,7 +33,8 @@ const props = defineProps({
 });
 
 const rarityIcon = computed(
-   () => new URL(`../../../assets/rarity_${props.rarity}.webp`, import.meta.url),
+   () =>
+      new URL(`../../../assets/rarity_${props.rarity}.webp`, import.meta.url),
 );
 
 const syndicateIcon = computed(() => {
@@ -203,10 +205,7 @@ watchEffect(() => {
          <div class="durability">{{ durability }}</div>
       </div>
 
-      <div class="credits">
-         <div class="site">https://customchrono.netlify.app</div>
-         <div v-if="artCredit" class="art">Art: {{ artCredit }}</div>
-      </div>
+      <PreviewCredits :artCredit="artCredit" />
    </div>
 </template>
 

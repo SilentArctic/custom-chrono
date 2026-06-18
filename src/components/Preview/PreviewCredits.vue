@@ -18,8 +18,11 @@ defineProps({ artCredit: String });
    position: absolute;
    bottom: 1%;
    z-index: 2;
-   color: rgba(255, 255, 255, 0.6);
    font-size: var(--credits-font-size, clamp(0.55rem, 0.8vw, 0.6rem));
-   text-shadow: 0 0 5px black;
+   text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
 }
 </style>

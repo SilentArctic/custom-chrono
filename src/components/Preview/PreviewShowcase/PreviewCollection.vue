@@ -5,9 +5,9 @@ import { useFilesStore } from '@/stores/files.store';
 import { parseCardParams } from '@/utils/serializeState';
 import { transformDescription } from '@/utils';
 import * as CardTypes from '@/constants/creatorTypes';
-import PreviewCard from '../PreviewCards/PreviewCard.vue';
-import PreviewCredits from './PreviewCredits.vue';
 import { useBackgroundStyle } from '@/composables/useBackgroundStyle';
+import PreviewCard from '../PreviewCards/PreviewCard.vue';
+import PreviewCredits from '../PreviewCredits.vue';
 
 const showcaseStore = useShowcaseStore();
 const filesStore = useFilesStore();
@@ -73,7 +73,11 @@ const backgroundStyle = useBackgroundStyle();
                   v-for="(entry, i) in collectionEntries"
                   :key="i"
                   class="card-entry"
-                  :class="{ agent: entry.isAgent, up: entry.position === 'up', down: entry.position === 'down' }"
+                  :class="{
+                     agent: entry.isAgent,
+                     up: entry.position === 'up',
+                     down: entry.position === 'down',
+                  }"
                >
                   <div v-if="entry.empty" class="card-slot empty-slot" />
                   <div
@@ -103,7 +107,7 @@ const backgroundStyle = useBackgroundStyle();
 
          <PreviewCredits
             :art-credit="showcaseStore.artCredit"
-            style="--credits-font-size: 0.8cqw"
+            style="--credits-font-size: 1cqw"
          />
       </div>
    </div>
@@ -238,8 +242,12 @@ const backgroundStyle = useBackgroundStyle();
                min-width: 0;
                transition: transform 0.3s ease;
 
-               &.up { transform: translateY(-8cqh); }
-               &.down { transform: translateY(8cqh); }
+               &.up {
+                  transform: translateY(-8cqh);
+               }
+               &.down {
+                  transform: translateY(8cqh);
+               }
 
                /* Each card's width is the smaller of: the width a 5-up row
                   allows, and the width implied by the row's height (× 3/4).

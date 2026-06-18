@@ -5,9 +5,9 @@ import { useFilesStore } from '@/stores/files.store';
 import { parseCardParams } from '@/utils/serializeState';
 import { transformDescription } from '@/utils';
 import * as CardTypes from '@/constants/creatorTypes';
-import PreviewCard from '../PreviewCards/PreviewCard.vue';
-import PreviewCredits from './PreviewCredits.vue';
 import { useBackgroundStyle } from '@/composables/useBackgroundStyle';
+import PreviewCard from '../PreviewCards/PreviewCard.vue';
+import PreviewCredits from '../PreviewCredits.vue';
 
 const showcaseStore = useShowcaseStore();
 const filesStore = useFilesStore();
@@ -36,7 +36,7 @@ const backgroundStyle = useBackgroundStyle();
 </script>
 
 <template>
-   <div class="showcase">
+   <div class="feature">
       <div id="showcase-print-wrapper" class="print-wrapper">
          <img
             v-if="showcaseStore.background"
@@ -83,14 +83,17 @@ const backgroundStyle = useBackgroundStyle();
             </p>
          </div>
 
-         <PreviewCredits :art-credit="showcaseStore.artCredit" />
+         <PreviewCredits
+            :artCredit="showcaseStore.artCredit"
+            style="--credits-font-size: 0.8cqw"
+         />
       </div>
    </div>
 </template>
 
 <style lang="scss" scoped>
 /* % / cqw / rem used throughout so the showcase scales to any screen size */
-.showcase {
+.feature {
    height: 100%;
    flex: 3.75;
    display: flex;
@@ -260,7 +263,6 @@ const backgroundStyle = useBackgroundStyle();
             align-self: center;
          }
       }
-
    }
 }
 </style>
