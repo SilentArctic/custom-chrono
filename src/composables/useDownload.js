@@ -34,7 +34,9 @@ export function useDownload() {
       try {
          if (isShowcase.value) {
             const isCollection = cardStore.cardType === CardTypes.COLLECTION;
-            const nodeId = isCollection ? 'collection-print-wrapper' : 'showcase-print-wrapper';
+            const nodeId = isCollection
+               ? 'collection-print-wrapper'
+               : 'showcase-print-wrapper';
             const node = document.getElementById(nodeId);
             if (!node) return;
             const TARGET_WIDTH = 1920;
@@ -67,7 +69,9 @@ export function useDownload() {
 
          const ids = [
             'print-wrapper-0',
-            ...(cardStore.cardType === CardTypes.AGENT ? ['print-wrapper-1'] : []),
+            ...(cardStore.cardType === CardTypes.AGENT
+               ? ['print-wrapper-1']
+               : []),
          ];
 
          const cardsWrapperId = 'print-wrapper-all';
@@ -118,7 +122,10 @@ export function useDownload() {
                      i.onload = () => res(i);
                      i.src = url;
                   });
-               const [img0, img1] = await Promise.all([loadImg(url0), loadImg(url1)]);
+               const [img0, img1] = await Promise.all([
+                  loadImg(url0),
+                  loadImg(url1),
+               ]);
                const gap = Math.round(16 * pr); // 1rem gap scaled to output resolution
                const canvas = document.createElement('canvas');
                canvas.width = img0.width + gap + img1.width;
@@ -163,7 +170,7 @@ export function useDownload() {
       } catch (err) {
          if (isCorsError(err)) {
             $toast.error(
-               'Download failed: one or more images could not be loaded due to CORS restrictions. Try hosting the image elsewhere (e.g. Imgur) and re-adding it.',
+               'Download failed: one or more images could not be loaded due to CORS restrictions. Try hosting the image elsewhere (e.g. https://imgbb.com) and re-adding it.',
                { duration: 8000 },
             );
          } else {
