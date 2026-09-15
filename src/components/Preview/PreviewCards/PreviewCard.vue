@@ -21,6 +21,7 @@ const props = defineProps({
    },
    name: { type: String, required: true },
    art: { type: String, required: true },
+   artLocal: { type: String, default: '' },
    artCredit: { type: String, required: true },
    artPos: { type: Object, required: true },
    cost: { type: Number, required: true },
@@ -45,6 +46,8 @@ const syndicateIcon = computed(() => {
 const transformedDescription = computed(() =>
    transformDescription(props.description),
 );
+
+const resolvedArt = computed(() => props.artLocal || props.art);
 
 const artStyle = computed(() => {
    const { x, y, z, r } = props.artPos;
@@ -145,9 +148,9 @@ watchEffect(() => {
 <template>
    <div ref="cardRef" class="card">
       <img
-         v-if="art"
+         v-if="resolvedArt"
          class="card-image"
-         :src="art"
+         :src="resolvedArt"
          :style="artStyle"
          alt="Card image"
       />

@@ -7,6 +7,7 @@ import { parseCardParams } from '../utils/serializeState';
 export const createCard = () => ({
    name: '',
    art: '',
+   artLocal: '',
    artCredit: '',
    artPos: { x: 0, y: 0, z: 0, r: 0 },
    description: '',

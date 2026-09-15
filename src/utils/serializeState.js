@@ -9,7 +9,8 @@ export function buildCardParams(cardStore) {
 
    cards.forEach((card) => {
       Object.keys(card).forEach((key) => {
-         if (key === 'rarity') return;
+         /* local uploads are stored on-device only, never shared by link */
+         if (key === 'rarity' || key === 'artLocal') return;
 
          let value =
             typeof card[key] === 'object'
@@ -118,6 +119,9 @@ export function parseShowcaseParams(params) {
       description: '',
       artCredit: '',
       background: '',
+      /* local uploads are stored on-device only, never carried by a
+         shared link, so a freshly-parsed state always starts without one */
+      backgroundLocal: '',
       backgroundPos: { x: 0, y: 0, z: 0, r: 0 },
       exampleFileId: '',
       collectionFileIds: Array(CreatorTypes.COLLECTION_SLOTS_INITIAL).fill(''),
