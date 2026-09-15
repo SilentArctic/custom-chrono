@@ -1,6 +1,7 @@
 <script setup>
 import { BaseInput, BaseHr, BaseSelect } from '../common';
 import EditBarArtSlider from './EditBarArtSlider.vue';
+import EditBarImageInput from './EditBarImageInput.vue';
 import FileSelect from '../Files/FileSelect.vue';
 import { ref } from 'vue';
 import { useShowcaseHandlers } from '@/composables/useShowcaseHandlers';
@@ -47,11 +48,12 @@ const handleFileId = (index, { target }) => {
 
    <BaseHr />
 
-   <BaseInput
-      name="background"
+   <EditBarImageInput
+      url-name="background"
+      :url-value="showcaseStore.background"
+      local-name="backgroundLocal"
+      :local-value="showcaseStore.backgroundLocal"
       placeholder="Background Image URL"
-      autocomplete="off"
-      :value="showcaseStore.background"
       @input="handleValue"
    />
 

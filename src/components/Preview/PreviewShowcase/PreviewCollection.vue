@@ -54,9 +54,9 @@ const backgroundStyle = useBackgroundStyle();
    <div class="collection">
       <div id="collection-print-wrapper" class="print-wrapper">
          <img
-            v-if="showcaseStore.background"
+            v-if="showcaseStore.backgroundLocal || showcaseStore.background"
             class="bg-image"
-            :src="showcaseStore.background"
+            :src="showcaseStore.backgroundLocal || showcaseStore.background"
             :style="backgroundStyle"
             alt=""
          />

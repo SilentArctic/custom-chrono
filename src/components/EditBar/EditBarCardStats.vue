@@ -1,6 +1,7 @@
 <script setup>
 import * as CardTypes from '@/constants/creatorTypes.js';
 import EditBarArtSlider from './EditBarArtSlider.vue';
+import EditBarImageInput from './EditBarImageInput.vue';
 import { BaseInput } from '../common';
 import BaseSelect from '../common/BaseSelect.vue';
 
@@ -39,11 +40,12 @@ const handleRange = ({ target: { name, value } }) => {
          @input="handleValue"
       />
 
-      <BaseInput
-         name="art"
+      <EditBarImageInput
+         url-name="art"
+         :url-value="card.art"
+         local-name="artLocal"
+         :local-value="card.artLocal"
          placeholder="Image URL"
-         autocomplete="off"
-         :value="card.art"
          @input="handleValue"
       />
       <BaseInput

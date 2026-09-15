@@ -8,6 +8,7 @@ const createShowcase = () => ({
    description: '',
    artCredit: '',
    background: '',
+   backgroundLocal: '',
    backgroundPos: { x: 0, y: 0, z: 0, r: 0 },
    exampleFileId: '',
    collectionFileIds: Array(COLLECTION_SLOTS_INITIAL).fill(''),
