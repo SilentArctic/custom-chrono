@@ -79,7 +79,7 @@ const clearLocal = () => emitValue(props.localName, '');
       </div>
       <p v-if="localValue" class="local-note">
          Using an uploaded image, stored on this device only. It will not be
-         included if this project is shared by link.
+         shared by link and will not be saved with the card.
       </p>
       <input
          ref="fileInput"
