@@ -34,30 +34,31 @@ describe('extractPills', () => {
       expect(text).toBe('When played, draw.');
    });
 
-   it('pills the leading keywords even when text follows on the same line', () => {
-      expect(extractPills('[Blitz] [Evasive] [hola] s')).toEqual({
-         pills: ['Blitz', 'Evasive'],
+   it('pills the game keywords wherever they appear and keeps the rest of the text', () => {
+      expect(extractPills('[Blitz] [Evasive] [hola] s  [Confront]')).toEqual({
+         pills: ['Blitz', 'Evasive', 'Confront'],
          text: '[hola] s',
       });
-      expect(extractPills('[Blitz] when played\nDraw.')).toEqual({
-         pills: ['Blitz'],
-         text: 'when played\nDraw.',
-      });
-   });
-
-   it('keeps unknown bracketed words as gold text and pills the game keywords', () => {
-      expect(extractPills('[Blitz] [Evasive] [hola]\nDraw.')).toEqual({
+      expect(extractPills('Gain [Blitz] and [Evasive].')).toEqual({
          pills: ['Blitz', 'Evasive'],
-         text: '[hola]\nDraw.',
+         text: 'Gain and.',
       });
    });
 
-   it('does not pill keywords that appear after other text', () => {
-      const source = 'Gain [Blitz] and [Evasive].';
-      expect(extractPills(source)).toEqual({ pills: [], text: source });
+   it('drops the lines that only held keywords', () => {
+      expect(extractPills('Deal 2 damage.\n[Siphon]\nDraw.')).toEqual({
+         pills: ['Siphon'],
+         text: 'Deal 2 damage.\nDraw.',
+      });
    });
 
-   it('leaves a line alone when none of its words are game keywords', () => {
+   it('leaves the Immortalize clause untouched', () => {
+      const { effect, clause } = splitImmortalizeClause('[Blitz] [hola] s\n\n[Immortalize]: Gain [Evasive].');
+      expect(extractPills(effect)).toEqual({ pills: ['Blitz'], text: '[hola] s' });
+      expect(clause).toBe('Gain [Evasive].');
+   });
+
+   it('leaves the text alone when it holds no game keywords', () => {
       const source = '[Elusive] [hola]\nDraw.';
       expect(extractPills(source)).toEqual({ pills: [], text: source });
    });
