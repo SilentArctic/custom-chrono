@@ -1,9 +1,22 @@
 <script setup>
-import { computed, ref, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
+import {
+   computed,
+   ref,
+   watch,
+   watchEffect,
+   onMounted,
+   onBeforeUnmount,
+} from 'vue';
 import VanillaTilt from 'vanilla-tilt';
 import * as CardTypes from '@/constants/creatorTypes';
 import { getFrameKind, renderGameCard } from '@/utils/gameCard/renderer';
-import { CANVAS_LEFT, CANVAS_TOP, CANVAS_WIDTH, frameBounds } from '@/utils/gameCard/layout';
+import {
+   CANVAS_LEFT,
+   CANVAS_TOP,
+   CANVAS_WIDTH,
+   frameBody,
+   frameBounds,
+} from '@/utils/gameCard/layout';
 import PreviewCredits from '../PreviewCredits.vue';
 
 const props = defineProps({
@@ -85,6 +98,7 @@ const model = computed(() => ({
 }));
 
 const bounds = computed(() => frameBounds(getFrameKind(model.value)));
+const body = computed(() => frameBody(getFrameKind(model.value)));
 
 const cardStyle = computed(() => ({
    aspectRatio: `${bounds.value.w} / ${bounds.value.h}`,
@@ -96,6 +110,18 @@ const canvasStyle = computed(() => {
       width: `${(CANVAS_WIDTH / w) * 100}%`,
       left: `${((CANVAS_LEFT - x) / w) * 100}%`,
       top: `${((y + h - CANVAS_TOP) / h) * 100}%`,
+   };
+});
+
+const glassStyle = computed(() => {
+   const { x, y, w, h } = bounds.value;
+   const { x: bx, y: by, w: bw, h: bh, r } = body.value;
+   return {
+      left: `${((bx - x) / w) * 100}%`,
+      top: `${((y + h - (by + bh)) / h) * 100}%`,
+      width: `${(bw / w) * 100}%`,
+      height: `${(bh / h) * 100}%`,
+      borderRadius: `${(r / bw) * 100}% / ${(r / bh) * 100}%`,
    };
 });
 
@@ -146,6 +172,7 @@ watchEffect(() => {
 
 <template>
    <div ref="cardRef" class="card" :style="cardStyle">
+      <div class="card-glass" :style="glassStyle" />
       <canvas ref="canvasRef" class="card-canvas" :style="canvasStyle" />
       <PreviewCredits :artCredit="artCredit" />
    </div>
@@ -163,13 +190,8 @@ watchEffect(() => {
          cards padding-top + 10px gap so the card clears the EditBar */
       max-height: calc(80vh - 120px);
    }
-   background: $glass;
    aspect-ratio: 960 / 1288;
-   border-radius: 6.5%;
-   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
    position: relative;
-   backdrop-filter: $glass-blur;
-   -webkit-backdrop-filter: $glass-blur;
    font-family: 'Barlow Condensed', sans-serif;
    letter-spacing: 7.5%;
    text-shadow:
@@ -177,7 +199,15 @@ watchEffect(() => {
       1px -1px 0 #000,
       -1px 1px 0 #000,
       1px 1px 0 #000;
-   overflow: hidden;
+
+   /* glass sits behind the frame body only, so the gems overhang it */
+   .card-glass {
+      position: absolute;
+      background: $glass;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: $glass-blur;
+      -webkit-backdrop-filter: $glass-blur;
+   }
 
    .card-canvas {
       display: block;
@@ -194,7 +224,7 @@ watchEffect(() => {
       gap: 0 1.5em;
       padding: 0 14%;
       position: absolute;
-      bottom: 6.4%;
+      bottom: 8%;
       font-size: 2cqw;
       line-height: 1.2;
       text-align: center;

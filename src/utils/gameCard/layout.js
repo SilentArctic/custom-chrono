@@ -55,6 +55,12 @@ export function frameBounds(frame) {
    return fitPreservingAspect(base, width, height, 0, 0);
 }
 
+export function frameBody(frame) {
+   return frame === 'action'
+      ? { ...LAYOUT.actionBodyRect, r: LAYOUT.actionBodyRadius }
+      : { ...LAYOUT.agentBodyRect, r: LAYOUT.agentBodyRadius };
+}
+
 export const FORUM_METRICS = { ascent: 0.856, descent: 0.248, lineHeight: 1.004 };
 
 export const LAYOUT = {
@@ -68,6 +74,10 @@ export const LAYOUT = {
 
    agentFrameRect: rect(-6.3, -1, CARD_WIDTH + 6.3 + 5, CARD_HEIGHT + 1 + 9.7),
    actionFrameRect: rect(-8.1, 0, CARD_WIDTH + 8.1 + 6, CARD_HEIGHT + 15),
+   agentBodyRect: rect(2.5, 6, 147, 203.5),
+   agentBodyRadius: 7.5,
+   actionBodyRect: rect(1.2, 11.9, 148.8, 197.6),
+   actionBodyRadius: 14,
 
    artWindows: {
       base: [0.083333, 0.049689, 0.933333, 0.953416],
