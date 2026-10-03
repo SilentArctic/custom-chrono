@@ -43,6 +43,17 @@ defineEmits(['close']);
                <span v-html="transformDescription('_italic_')" />:
                <span>Use _underscores_ to italicize words.</span>
             </p>
+            <p>
+               <span v-html="transformDescription('[Blitz] [Evasive]')" />:
+               <span>Game keywords listed at the start of the description ([Blitz], [Cleave], [Confront], [Delay], [Evasive], [Exposed], [Overpower], [Rejuvenate], [Siphon], [Temporary], [Transient], [Fervor]) are shown as keyword pills above the text; keywords mentioned later in the text, and any other [word], stay as gold text.</span>
+            </p>
+            <p>
+               <span>Typing [ or $ opens a list of the game's keywords or timelines; pick one with the arrow keys and Enter, or click it.</span>
+            </p>
+            <p>
+               <span v-html="transformDescription('[Immortalize]:')" />:
+               <span>On a base Agent, everything after a line starting with [Immortalize]: is drawn as the Immortalize clause under the effect text.</span>
+            </p>
             <br />
             <img src="https://i.imgur.com/c8510Hx.png" />
          </section>

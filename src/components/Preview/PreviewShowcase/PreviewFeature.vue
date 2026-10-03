@@ -62,6 +62,7 @@ const backgroundStyle = useBackgroundStyle();
                   <PreviewCard
                      v-bind="exampleState.cards[0]"
                      :cardType="exampleState.cardType"
+                     :resolution="6"
                      :syndicate="exampleState.syndicate"
                      :rarity="exampleState.rarity"
                   />
@@ -73,6 +74,8 @@ const backgroundStyle = useBackgroundStyle();
                   <PreviewCard
                      v-bind="exampleState.cards[1]"
                      :cardType="exampleState.cardType"
+                     immortalized
+                     :resolution="6"
                      :syndicate="exampleState.syndicate"
                      :rarity="exampleState.rarity"
                   />
@@ -241,7 +244,7 @@ const backgroundStyle = useBackgroundStyle();
             this wrapper yields a definite width; the card just fills it. */
          .example-cards:not(.agent) .example-card {
             height: 100%;
-            aspect-ratio: 3 / 4;
+            aspect-ratio: 960 / 1288;
             max-width: 100%;
 
             :deep(.card) {

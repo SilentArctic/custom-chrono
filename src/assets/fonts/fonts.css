@@ -1,0 +1,27 @@
+@font-face {
+   font-family: 'Forum';
+   font-weight: 400;
+   font-display: swap;
+   src: url('./Forum-Regular.ttf') format('truetype');
+}
+
+@font-face {
+   font-family: 'Barlow';
+   font-weight: 700;
+   font-display: swap;
+   src: url('./Barlow-Bold.ttf') format('truetype');
+}
+
+@font-face {
+   font-family: 'Barlow Semi Condensed';
+   font-weight: 600;
+   font-display: swap;
+   src: url('./BarlowSemiCondensed-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+   font-family: 'Barlow Condensed';
+   font-weight: 600;
+   font-display: swap;
+   src: url('./BarlowCondensed-SemiBold.ttf') format('truetype');
+}

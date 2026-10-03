@@ -12,7 +12,8 @@ const isCorsError = (err) => {
       msg.includes('NetworkError') ||
       msg.includes('CORS') ||
       msg.includes('cross-origin') ||
-      msg.includes('tainted')
+      msg.includes('tainted') ||
+      msg.includes('Tainted')
    );
 };
 
