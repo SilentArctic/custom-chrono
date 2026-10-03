@@ -2,7 +2,7 @@
 import * as CardTypes from '@/constants/creatorTypes.js';
 import EditBarArtSlider from './EditBarArtSlider.vue';
 import EditBarImageInput from './EditBarImageInput.vue';
-import { BaseInput } from '../common';
+import { BaseInput, DescriptionInput } from '../common';
 import BaseSelect from '../common/BaseSelect.vue';
 
 const emit = defineEmits(['updateValue', 'updateArtPos']);
@@ -117,8 +117,7 @@ const handleRange = ({ target: { name, value } }) => {
          </BaseSelect>
       </div>
 
-      <BaseInput
-         textarea
+      <DescriptionInput
          name="description"
          placeholder="Description. Hint: [keyword], {card reference}, $timeline$, @ for chain symbol."
          rows="6"

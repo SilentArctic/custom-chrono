@@ -88,6 +88,8 @@ const backgroundStyle = useBackgroundStyle();
                      <PreviewCard
                         v-bind="card"
                         :cardType="entry.cardType"
+                        :immortalized="j === 1"
+                        :resolution="6"
                         :syndicate="entry.syndicate"
                         :rarity="entry.rarity"
                      />
@@ -255,9 +257,9 @@ const backgroundStyle = useBackgroundStyle();
                   so fewer cards simply center with more space around them. */
                .card-slot {
                   --avail-w: calc((100cqw - 4 * var(--g-between)) / 5);
-                  --w: min(calc(100cqh * 0.75), var(--avail-w));
+                  --w: min(calc(100cqh * 164 / 238), var(--avail-w));
                   width: var(--w);
-                  height: calc(var(--w) * 4 / 3);
+                  height: calc(var(--w) * 238 / 164);
 
                   :deep(.card) {
                      width: 100%;

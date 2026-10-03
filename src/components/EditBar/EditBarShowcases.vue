@@ -1,5 +1,5 @@
 <script setup>
-import { BaseInput, BaseHr } from '../common';
+import { BaseInput, BaseHr, DescriptionInput } from '../common';
 import EditBarArtSlider from './EditBarArtSlider.vue';
 import EditBarImageInput from './EditBarImageInput.vue';
 import FileSelect from '../Files/FileSelect.vue';
@@ -26,8 +26,7 @@ const { showcaseStore, handleValue, handleRange } = useShowcaseHandlers();
       @input="handleValue"
    />
 
-   <BaseInput
-      textarea
+   <DescriptionInput
       name="description"
       placeholder="Description. Hint: [keyword], {card reference}, $timeline$, @ for chain symbol."
       rows="6"

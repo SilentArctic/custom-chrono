@@ -1,16 +1,8 @@
 <script setup>
-import {
-   computed,
-   ref,
-   watch,
-   watchEffect,
-   onMounted,
-   onBeforeUnmount,
-   nextTick,
-} from 'vue';
+import { computed, ref, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import VanillaTilt from 'vanilla-tilt';
 import * as CardTypes from '@/constants/creatorTypes';
-import { transformDescription } from '@/utils';
+import { renderGameCard } from '@/utils/gameCard/renderer';
 import PreviewCredits from '../PreviewCredits.vue';
 
 const props = defineProps({
@@ -30,113 +22,104 @@ const props = defineProps({
    strength: { type: Number },
    durability: { type: Number },
    actionSpeed: { type: String, default: 'immediate' },
-   rarity: { type: String, default: 'rarity_common' },
+   rarity: { type: String, default: 'common' },
+   immortalized: { type: Boolean, default: false },
+   resolution: { type: Number, default: 10 },
 });
-
-const rarityIcon = computed(
-   () =>
-      new URL(`../../../assets/rarity_${props.rarity}.webp`, import.meta.url),
-);
-
-const syndicateIcon = computed(() => {
-   if (!props.syndicate) return '';
-   return new URL(`../../../assets/${props.syndicate}.webp`, import.meta.url);
-});
-
-const transformedDescription = computed(() =>
-   transformDescription(props.description),
-);
 
 const resolvedArt = computed(() => props.artLocal || props.art);
+const artImage = ref(null);
 
-const artStyle = computed(() => {
-   const { x, y, z, r } = props.artPos;
-   return {
-      transform: `translate(${x / 5}%, ${y / 5}%) rotate(${r}deg)`,
-      scale: 1 + z / 100,
-   };
-});
-
-const costIcon = computed(() =>
-   props.cardType === CardTypes.AGENT
-      ? new URL('../../../assets/power_cost.webp', import.meta.url)
-      : new URL(
-           `../../../assets/power_cost_${props.actionSpeed}.webp`,
-           import.meta.url,
-        ),
-);
-
-/* Shrink the description font until the text fits its bounded box.
-   The base size is card-relative (cqw); this only kicks in once a long
-   description would otherwise overflow, mirroring the in-game behaviour. */
-const MIN_FIT_SCALE = 0.45;
-const descBox = ref(null);
-const descText = ref(null);
-const nameBox = ref(null);
-const nameText = ref(null);
-
-const fitName = () => {
-   const box = nameBox.value;
-   const text = nameText.value;
-   if (!box || !text) return;
-
-   let scale = 1;
-   text.style.setProperty('--name-fit-scale', '1');
-
-   let guard = 0;
-   while (
-      text.scrollWidth > box.clientWidth &&
-      scale > MIN_FIT_SCALE &&
-      guard < 40
-   ) {
-      scale = Math.max(MIN_FIT_SCALE, scale - 0.02);
-      text.style.setProperty('--name-fit-scale', String(scale));
-      guard += 1;
-   }
-};
-
-const fitDescription = () => {
-   const box = descBox.value;
-   const text = descText.value;
-   if (!box || !text) return;
-
-   let scale = 1;
-   text.style.setProperty('--fit-scale', '1');
-
-   let guard = 0;
-   while (
-      text.scrollHeight > box.clientHeight &&
-      scale > MIN_FIT_SCALE &&
-      guard < 40
-   ) {
-      scale = Math.max(MIN_FIT_SCALE, scale - 0.02);
-      text.style.setProperty('--fit-scale', String(scale));
-      guard += 1;
-   }
-};
-
-let resizeObserver;
-onMounted(() => {
-   resizeObserver = new ResizeObserver(() => {
-      fitDescription();
-      fitName();
+const loadImage = (src, crossOrigin) =>
+   new Promise((resolve, reject) => {
+      const image = new Image();
+      if (crossOrigin) image.crossOrigin = 'anonymous';
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = src;
    });
-   resizeObserver.observe(descBox.value);
-   resizeObserver.observe(nameBox.value);
-   /* re-fit once custom fonts have loaded, since metrics change */
-   document.fonts?.ready.then(() => {
-      fitDescription();
-      fitName();
-   });
-});
 
-onBeforeUnmount(() => resizeObserver?.disconnect());
-
-watch(transformedDescription, () => nextTick(fitDescription));
+let artRequest = 0;
 watch(
-   () => props.name,
-   () => nextTick(fitName),
+   resolvedArt,
+   (src) => {
+      artRequest += 1;
+      const request = artRequest;
+      if (!src) {
+         artImage.value = null;
+         return;
+      }
+      loadImage(src, true)
+         .catch(() => loadImage(src, false))
+         .then(
+            (image) => {
+               if (request === artRequest) artImage.value = image;
+            },
+            () => {
+               if (request === artRequest) artImage.value = null;
+            },
+         );
+   },
+   { immediate: true },
 );
+
+const model = computed(() => ({
+   cardType: props.cardType,
+   immortalized: props.immortalized,
+   name: props.name,
+   art: artImage.value,
+   artPos: {
+      x: props.artPos?.x ?? 0,
+      y: props.artPos?.y ?? 0,
+      z: props.artPos?.z ?? 0,
+      r: props.artPos?.r ?? 0,
+   },
+   cost: props.cost,
+   description: props.description,
+   syndicate: props.syndicate,
+   strength: props.strength,
+   durability: props.durability,
+   actionSpeed: props.actionSpeed,
+   rarity: props.rarity,
+}));
+
+const canvasRef = ref(null);
+const renderCache = {};
+let pendingFrame = 0;
+let rendering = false;
+let dirty = false;
+
+const draw = async () => {
+   pendingFrame = 0;
+   if (!canvasRef.value) return;
+   if (rendering) {
+      dirty = true;
+      return;
+   }
+   rendering = true;
+   try {
+      await renderGameCard(canvasRef.value, model.value, {
+         pixelsPerUnit: props.resolution,
+         cache: renderCache,
+      });
+   } catch (error) {
+      console.error(error);
+   } finally {
+      rendering = false;
+      if (dirty) {
+         dirty = false;
+         schedule();
+      }
+   }
+};
+
+const schedule = () => {
+   if (!pendingFrame) pendingFrame = requestAnimationFrame(draw);
+};
+
+watch(model, schedule);
+onMounted(schedule);
+onBeforeUnmount(() => cancelAnimationFrame(pendingFrame));
 
 const cardRef = ref(null);
 watchEffect(() => {
@@ -147,78 +130,15 @@ watchEffect(() => {
 
 <template>
    <div ref="cardRef" class="card">
-      <img
-         v-if="resolvedArt"
-         class="card-image"
-         :src="resolvedArt"
-         :style="artStyle"
-         alt="Card image"
-      />
-
-      <img
-         src="../../../assets/card_frame.webp"
-         class="card-frame"
-         alt="Card frame"
-      />
-
-      <div :class="['power-cost', cardType]">
-         <img :src="costIcon" />
-         <div class="cost">{{ cost }}</div>
-      </div>
-
-      <div v-if="cardType === CardTypes.ACTION" class="action-type">
-         {{ actionSpeed }}
-         <img
-            v-if="actionSpeed !== 'immediate'"
-            src="../../../assets/chain.webp"
-            alt="chain symbol"
-         />
-      </div>
-
-      <div class="desc_box">
-         <div class="desc-shade" />
-         <img
-            src="../../../assets/desc_box.webp"
-            alt="description-image"
-            title="description-image"
-         />
-
-         <div ref="nameBox" class="name">
-            <span ref="nameText" class="name-text">{{ name }}</span>
-         </div>
-
-         <div ref="descBox" class="description">
-            <div
-               ref="descText"
-               class="description-text"
-               v-html="transformedDescription"
-            />
-         </div>
-
-         <div v-if="syndicate" class="syndicate">
-            <img :src="syndicateIcon" />
-         </div>
-      </div>
-
-      <img :src="rarityIcon" class="rarity-icon" alt="Rarity icon" />
-
-      <div v-if="cardType === CardTypes.AGENT" class="agent-stats">
-         <img src="../../../assets/agent_stats.webp" />
-         <div class="strength">{{ strength }}</div>
-         <div class="durability">{{ durability }}</div>
-      </div>
-
+      <canvas ref="canvasRef" class="card-canvas" />
       <PreviewCredits :artCredit="artCredit" />
    </div>
 </template>
 
 <style lang="scss" scoped>
-/* % and vw used extensively to maintain card scale regardless of screen size */
-
 .card {
    /* container-type makes the card a query container, so every cqw unit
-      below is relative to the CARD's width rather than the viewport.
-      This ties all text directly to the card at any screen size. */
+      below is relative to the CARD's width rather than the viewport. */
    container-type: inline-size;
    max-height: 100vh;
 
@@ -228,7 +148,7 @@ watchEffect(() => {
       max-height: calc(80vh - 120px);
    }
    background: $glass;
-   aspect-ratio: 3/4;
+   aspect-ratio: 164 / 238;
    border-radius: 6.5%;
    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
    position: relative;
@@ -243,185 +163,11 @@ watchEffect(() => {
       1px 1px 0 #000;
    overflow: hidden;
 
-   .card-image {
+   .card-canvas {
+      display: block;
       width: 100%;
-   }
-
-   .card-frame {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-   }
-
-   .power-cost {
-      height: 16%;
-      aspect-ratio: 1;
-      position: absolute;
-      top: 2%;
-      left: 2%;
-      text-shadow: 0 0 5px black;
-      &.action {
-         height: 22%;
-         top: 1%;
-         left: -1%;
-
-         .cost {
-            top: 42%;
-            left: 51%;
-         }
-      }
-
-      .cost {
-         position: absolute;
-         top: 47%;
-         left: 52%;
-         transform: translate(-50%, -50%);
-         font-size: calc(9cqw * var(--name-fit-scale, 1));
-         font-weight: 600;
-      }
-   }
-
-   .action-type {
-      background: linear-gradient(to bottom, #4448, #0008);
-      display: flex;
-      align-items: center;
-      border: 2px solid $gold;
-      border-radius: 10px;
-      padding: 0.25rem 0.5rem;
-      position: absolute;
-      top: 3%;
-      right: 5%;
-      font-size: 4.5cqw;
-      text-shadow: 0 0 5px black;
-      text-transform: uppercase;
-
-      img {
-         margin-left: 5px;
-         width: 4cqw;
-         height: auto;
-      }
-   }
-
-   .desc_box {
-      width: 97%;
-      position: absolute;
-      left: 1.25%;
-      bottom: 3%;
-
-      img {
-         position: relative;
-      }
-
-      .desc-shade {
-         height: 90%;
-         width: 95%;
-         position: absolute;
-         top: 50%;
-         left: 50%;
-         transform: translate(-50%, -50%);
-         &:before {
-            background: rgba(#2b0c25, 0.5);
-            position: absolute;
-            z-index: -1;
-            inset: 0;
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.75);
-            content: '';
-            clip-path: polygon(
-               0% 0%,
-               100% 0%,
-               98% 0%,
-               98% 98%,
-               2.5% 98%,
-               2.5% 20%
-            );
-         }
-      }
-
-      .name {
-         position: absolute;
-         top: 7%;
-         left: 7%;
-         /* stop before syndicate icon (6% wide + 7% right margin + 2% gap) */
-         right: 17%;
-         height: 6cqw;
-         display: flex;
-         align-items: center;
-         overflow: hidden;
-         text-shadow: 0 0 5px black;
-
-         .name-text {
-            display: block;
-            white-space: nowrap;
-            font-size: calc(5cqw * var(--name-fit-scale, 1));
-         }
-      }
-
-      .syndicate {
-         width: 6%;
-         position: absolute;
-         top: 7.5%;
-         right: 7%;
-      }
-
-      /* bounded text area below the name bar; content is vertically
-         centred and shrunk to fit via the --fit-scale set in script */
-      .description {
-         position: absolute;
-         top: 30%;
-         right: 0;
-         bottom: 21%;
-         left: 0;
-         padding: 0 9%;
-         display: flex;
-         justify-content: center;
-         overflow: hidden;
-         text-align: center;
-         text-shadow: 0 0 5px black;
-
-         .description-text {
-            width: 100%;
-            font-size: calc(6cqw * var(--fit-scale, 1));
-            line-height: 1.3;
-         }
-
-         .highlight {
-            color: #d7bb4b;
-         }
-      }
-   }
-
-   .rarity-icon {
-      position: absolute;
-      width: 10%;
-      bottom: 2.4%;
-      left: 50%;
-      z-index: 5;
-      transform: translateX(-50%);
-   }
-
-   .agent-stats {
-      width: 100%;
-      position: absolute;
-      bottom: -2%;
-      left: -0.4%;
-
-      .strength,
-      .durability {
-         position: absolute;
-         bottom: 30%;
-         font-size: calc(6.5cqw * var(--name-fit-scale, 1));
-         font-weight: 600;
-      }
-
-      .strength {
-         left: 13%;
-      }
-
-      .durability {
-         right: 11%;
-      }
+      height: auto;
+      aspect-ratio: 164 / 226;
    }
 
    .credits {

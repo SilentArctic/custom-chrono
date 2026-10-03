@@ -46,6 +46,7 @@ const mobilePos = computed(() => {
             <PreviewCard
                v-bind="cardStore.cards[1]"
                :cardType="cardStore.cardType"
+               immortalized
                :syndicate="cardStore.syndicate"
                :rarity="cardStore.rarity"
             />
