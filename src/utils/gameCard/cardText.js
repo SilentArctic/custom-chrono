@@ -46,54 +46,27 @@ export function splitImmortalizeClause(text) {
 const pillKey = (name) =>
    PILL_KEYWORDS.find((keyword) => keyword.toLowerCase() === name.trim().toLowerCase());
 
-function splitPillLine(line) {
-   const names = [];
-   const rest = line.replace(/\[([^\]]+)\]/g, (_, name) => {
-      names.push(name);
-      return '';
-   });
-   if (!names.length || /[^\s,;.]/.test(rest)) return null;
-
-   const keys = names.map(pillKey).filter(Boolean);
-   if (!keys.length) return null;
-
-   const remaining = names.filter((name) => !pillKey(name)).map((name) => `[${name}]`);
-   return { keys, remaining: remaining.join(' ') };
-}
+const LEADING_ITEM = /^[\s,;.]*\[([^\]\n]+)\]/;
 
 export function extractPills(text) {
-   const lines = (text ?? '').split('\n');
+   const source = text ?? '';
    const pills = [];
-   let index = 0;
-   let changed = false;
+   const kept = [];
+   let rest = source;
 
-   while (index < lines.length) {
-      const line = lines[index];
-      if (!line.trim()) {
-         if (!changed) break;
-         index += 1;
-         continue;
-      }
-
-      const split = splitPillLine(line);
-      if (!split) break;
-
-      split.keys.forEach((key) => {
+   for (let match = LEADING_ITEM.exec(rest); match; match = LEADING_ITEM.exec(rest)) {
+      const key = pillKey(match[1]);
+      if (key) {
          if (!pills.includes(key)) pills.push(key);
-      });
-      changed = true;
-      if (split.remaining) {
-         lines[index] = split.remaining;
-         break;
+      } else {
+         kept.push(`[${match[1]}]`);
       }
-      index += 1;
+      rest = rest.slice(match[0].length);
    }
 
-   if (!changed) return { pills, text: text ?? '' };
+   if (!pills.length) return { pills, text: source };
 
-   const kept = lines.slice(index);
-   while (kept.length && !kept[0].trim()) kept.shift();
-   return { pills, text: kept.join('\n') };
+   return { pills, text: (kept.join(' ') + rest).replace(/^\s+/, '') };
 }
 
 export function parseMarkup(input, defaultColor = '#ffffff') {

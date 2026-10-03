@@ -34,9 +34,15 @@ describe('extractPills', () => {
       expect(text).toBe('When played, draw.');
    });
 
-   it('keeps lines that mix keywords with other text', () => {
-      const source = '[Blitz] when played\nDraw.';
-      expect(extractPills(source)).toEqual({ pills: [], text: source });
+   it('pills the leading keywords even when text follows on the same line', () => {
+      expect(extractPills('[Blitz] [Evasive] [hola] s')).toEqual({
+         pills: ['Blitz', 'Evasive'],
+         text: '[hola] s',
+      });
+      expect(extractPills('[Blitz] when played\nDraw.')).toEqual({
+         pills: ['Blitz'],
+         text: 'when played\nDraw.',
+      });
    });
 
    it('keeps unknown bracketed words as gold text and pills the game keywords', () => {
@@ -44,6 +50,11 @@ describe('extractPills', () => {
          pills: ['Blitz', 'Evasive'],
          text: '[hola]\nDraw.',
       });
+   });
+
+   it('does not pill keywords that appear after other text', () => {
+      const source = 'Gain [Blitz] and [Evasive].';
+      expect(extractPills(source)).toEqual({ pills: [], text: source });
    });
 
    it('leaves a line alone when none of its words are game keywords', () => {
