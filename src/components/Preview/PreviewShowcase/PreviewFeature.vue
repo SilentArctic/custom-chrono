@@ -244,7 +244,7 @@ const backgroundStyle = useBackgroundStyle();
             this wrapper yields a definite width; the card just fills it. */
          .example-cards:not(.agent) .example-card {
             height: 100%;
-            aspect-ratio: 164 / 238;
+            aspect-ratio: 960 / 1288;
             max-width: 100%;
 
             :deep(.card) {

@@ -34,22 +34,20 @@ describe('extractPills', () => {
       expect(text).toBe('When played, draw.');
    });
 
-   it('pills the game keywords wherever they appear and keeps the rest of the text', () => {
+   it('pills the leading keywords even when text follows on the same line', () => {
       expect(extractPills('[Blitz] [Evasive] [hola] s  [Confront]')).toEqual({
-         pills: ['Blitz', 'Evasive', 'Confront'],
-         text: '[hola] s',
-      });
-      expect(extractPills('Gain [Blitz] and [Evasive].')).toEqual({
          pills: ['Blitz', 'Evasive'],
-         text: 'Gain and.',
+         text: '[hola] s  [Confront]',
+      });
+      expect(extractPills('[Blitz] when played\nDraw.')).toEqual({
+         pills: ['Blitz'],
+         text: 'when played\nDraw.',
       });
    });
 
-   it('drops the lines that only held keywords', () => {
-      expect(extractPills('Deal 2 damage.\n[Siphon]\nDraw.')).toEqual({
-         pills: ['Siphon'],
-         text: 'Deal 2 damage.\nDraw.',
-      });
+   it('keeps keywords mentioned in the body as text', () => {
+      const source = 'This agent gains [Evasive] when a thing happens.';
+      expect(extractPills(source)).toEqual({ pills: [], text: source });
    });
 
    it('leaves the Immortalize clause untouched', () => {

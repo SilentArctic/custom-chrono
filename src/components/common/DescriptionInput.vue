@@ -50,8 +50,14 @@ const detect = () => {
 };
 
 const refresh = () => {
-   suggestion.value = detect();
-   highlighted.value = 0;
+   const next = detect();
+   const same =
+      next &&
+      suggestion.value &&
+      next.trigger === suggestion.value.trigger &&
+      next.start === suggestion.value.start;
+   suggestion.value = next;
+   if (!same) highlighted.value = 0;
 };
 
 const onInput = (event) => {
@@ -80,12 +86,13 @@ const pick = async (item) => {
 const onKeydown = (event) => {
    if (!suggestion.value || !matches.value.length) return;
 
+   const count = matches.value.length;
    if (event.key === 'ArrowDown') {
-      highlighted.value = (highlighted.value + 1) % matches.value.length;
+      highlighted.value = (highlighted.value + 1) % count;
    } else if (event.key === 'ArrowUp') {
-      highlighted.value = (highlighted.value - 1 + matches.value.length) % matches.value.length;
+      highlighted.value = (highlighted.value - 1 + count) % count;
    } else if (event.key === 'Enter' || event.key === 'Tab') {
-      pick(matches.value[highlighted.value]);
+      pick(matches.value[Math.min(highlighted.value, count - 1)]);
    } else if (event.key === 'Escape') {
       close();
    } else {
@@ -106,7 +113,7 @@ const onKeydown = (event) => {
          @input="onInput"
          @keydown="onKeydown"
          @click="refresh"
-         @keyup.left.right.up.down="refresh"
+         @keyup.left.right="refresh"
          @blur="close"
       />
       <ul v-if="suggestion && matches.length" class="suggestions">

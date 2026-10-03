@@ -45,7 +45,7 @@ defineEmits(['close']);
             </p>
             <p>
                <span v-html="transformDescription('[Blitz] [Evasive]')" />:
-               <span>Game keywords anywhere in the description ([Blitz], [Cleave], [Confront], [Delay], [Evasive], [Exposed], [Overpower], [Rejuvenate], [Siphon], [Temporary], [Transient], [Fervor]) are taken out of the text and shown as keyword pills above it; any other [word] stays as gold text. Keywords inside the [Immortalize]: clause stay as text.</span>
+               <span>Game keywords listed at the start of the description ([Blitz], [Cleave], [Confront], [Delay], [Evasive], [Exposed], [Overpower], [Rejuvenate], [Siphon], [Temporary], [Transient], [Fervor]) are shown as keyword pills above the text; keywords mentioned later in the text, and any other [word], stay as gold text.</span>
             </p>
             <p>
                <span>Typing [ or $ opens a list of the game's keywords or timelines; pick one with the arrow keys and Enter, or click it.</span>

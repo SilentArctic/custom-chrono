@@ -2,7 +2,8 @@
 import { computed, ref, watch, watchEffect, onMounted, onBeforeUnmount } from 'vue';
 import VanillaTilt from 'vanilla-tilt';
 import * as CardTypes from '@/constants/creatorTypes';
-import { renderGameCard } from '@/utils/gameCard/renderer';
+import { getFrameKind, renderGameCard } from '@/utils/gameCard/renderer';
+import { CANVAS_LEFT, CANVAS_TOP, CANVAS_WIDTH, frameBounds } from '@/utils/gameCard/layout';
 import PreviewCredits from '../PreviewCredits.vue';
 
 const props = defineProps({
@@ -83,6 +84,21 @@ const model = computed(() => ({
    rarity: props.rarity,
 }));
 
+const bounds = computed(() => frameBounds(getFrameKind(model.value)));
+
+const cardStyle = computed(() => ({
+   aspectRatio: `${bounds.value.w} / ${bounds.value.h}`,
+}));
+
+const canvasStyle = computed(() => {
+   const { x, y, w, h } = bounds.value;
+   return {
+      width: `${(CANVAS_WIDTH / w) * 100}%`,
+      left: `${((CANVAS_LEFT - x) / w) * 100}%`,
+      top: `${((y + h - CANVAS_TOP) / h) * 100}%`,
+   };
+});
+
 const canvasRef = ref(null);
 const renderCache = {};
 let pendingFrame = 0;
@@ -129,8 +145,8 @@ watchEffect(() => {
 </script>
 
 <template>
-   <div ref="cardRef" class="card">
-      <canvas ref="canvasRef" class="card-canvas" />
+   <div ref="cardRef" class="card" :style="cardStyle">
+      <canvas ref="canvasRef" class="card-canvas" :style="canvasStyle" />
       <PreviewCredits :artCredit="artCredit" />
    </div>
 </template>
@@ -148,7 +164,7 @@ watchEffect(() => {
       max-height: calc(80vh - 120px);
    }
    background: $glass;
-   aspect-ratio: 164 / 238;
+   aspect-ratio: 960 / 1288;
    border-radius: 6.5%;
    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
    position: relative;
@@ -165,7 +181,7 @@ watchEffect(() => {
 
    .card-canvas {
       display: block;
-      width: 100%;
+      position: absolute;
       height: auto;
       aspect-ratio: 164 / 226;
    }
@@ -173,11 +189,15 @@ watchEffect(() => {
    .credits {
       width: 100%;
       display: flex;
-      justify-content: space-between;
-      padding: 0 4.5%;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0 1.5em;
+      padding: 0 14%;
       position: absolute;
-      bottom: 1%;
+      bottom: 6.4%;
       font-size: 2cqw;
+      line-height: 1.2;
+      text-align: center;
    }
 }
 </style>

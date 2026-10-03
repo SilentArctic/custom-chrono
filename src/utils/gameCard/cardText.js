@@ -46,28 +46,27 @@ export function splitImmortalizeClause(text) {
 const pillKey = (name) =>
    PILL_KEYWORDS.find((keyword) => keyword.toLowerCase() === name.trim().toLowerCase());
 
-const BRACKETED = /[ \t]*\[([^\]\n]+)\]/g;
+const LEADING_ITEM = /^[\s,;.]*\[([^\]\n]+)\]/;
 
 export function extractPills(text) {
    const source = text ?? '';
    const pills = [];
+   const kept = [];
+   let rest = source;
 
-   const lines = source.split('\n').map((line) => {
-      const stripped = line.replace(BRACKETED, (match, name) => {
-         const key = pillKey(name);
-         if (!key) return match;
+   for (let match = LEADING_ITEM.exec(rest); match; match = LEADING_ITEM.exec(rest)) {
+      const key = pillKey(match[1]);
+      if (key) {
          if (!pills.includes(key)) pills.push(key);
-         return '';
-      });
-      if (stripped === line) return line;
-      return stripped.replace(/[ \t]{2,}/g, ' ').trim() || null;
-   });
+      } else {
+         kept.push(`[${match[1]}]`);
+      }
+      rest = rest.slice(match[0].length);
+   }
 
    if (!pills.length) return { pills, text: source };
 
-   const kept = lines.filter((line) => line !== null);
-   while (kept.length && !kept[0].trim()) kept.shift();
-   return { pills, text: kept.join('\n') };
+   return { pills, text: (kept.join(' ') + rest).replace(/^\s+/, '') };
 }
 
 export function parseMarkup(input, defaultColor = '#ffffff') {

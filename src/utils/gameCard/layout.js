@@ -26,6 +26,35 @@ export function createUnits(pixelsPerUnit) {
    };
 }
 
+export function fitPreservingAspect(r, spriteWidth, spriteHeight, pivotX, pivotY) {
+   const spriteRatio = spriteWidth / spriteHeight;
+   const rectRatio = r.w / r.h;
+   const fitted = { ...r };
+   if (spriteRatio > rectRatio) {
+      const height = r.w / spriteRatio;
+      fitted.y += (r.h - height) * pivotY;
+      fitted.h = height;
+   } else {
+      const width = r.h * spriteRatio;
+      fitted.x += (r.w - width) * pivotX;
+      fitted.w = width;
+   }
+   return fitted;
+}
+
+export const FRAME_SPRITE_SIZES = {
+   base: [960, 1288],
+   immortal: [960, 1288],
+   token: [960, 1288],
+   action: [960, 1312],
+};
+
+export function frameBounds(frame) {
+   const [width, height] = FRAME_SPRITE_SIZES[frame] ?? FRAME_SPRITE_SIZES.base;
+   const base = frame === 'action' ? LAYOUT.actionFrameRect : LAYOUT.agentFrameRect;
+   return fitPreservingAspect(base, width, height, 0, 0);
+}
+
 export const FORUM_METRICS = { ascent: 0.856, descent: 0.248, lineHeight: 1.004 };
 
 export const LAYOUT = {

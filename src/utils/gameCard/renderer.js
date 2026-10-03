@@ -6,6 +6,7 @@ import {
    LAYOUT as L,
    TEXT_STYLES,
    createUnits,
+   fitPreservingAspect,
    offset,
    rect,
 } from './layout';
@@ -618,22 +619,6 @@ function drawStyledText(ctx, text, style, sizePx, x, baseline, width) {
 function parseColor(color) {
    const parts = color.match(/[\d.]+/g).map(Number);
    return [parts[0], parts[1], parts[2], parts.length > 3 ? parts[3] : 1];
-}
-
-function fitPreservingAspect(r, spriteWidth, spriteHeight, pivotX, pivotY) {
-   const spriteRatio = spriteWidth / spriteHeight;
-   const rectRatio = r.w / r.h;
-   const fitted = { ...r };
-   if (spriteRatio > rectRatio) {
-      const height = r.w / spriteRatio;
-      fitted.y += (r.h - height) * pivotY;
-      fitted.h = height;
-   } else {
-      const width = r.h * spriteRatio;
-      fitted.x += (r.w - width) * pivotX;
-      fitted.w = width;
-   }
-   return fitted;
 }
 
 function makeCanvas(width, height) {

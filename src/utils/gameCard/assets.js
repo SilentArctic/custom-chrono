@@ -1,6 +1,6 @@
 import { FONT_FACES } from './layout';
 
-const files = import.meta.glob('@/assets/game/**/*.png', {
+const files = import.meta.glob('@/assets/game/**/*.webp', {
    eager: true,
    query: '?url',
    import: 'default',
@@ -45,18 +45,18 @@ const DRAIN = 'rgb(255,0,18)';
 const STATUS = 'rgb(181,0,255)';
 
 const KEYWORD_ICONS = {
-   Blitz: ['Blitz_icon.png', OFFENSE],
-   Cleave: ['Cleave_icon.png', OFFENSE],
-   Confront: ['Confront_icon.png', OFFENSE],
-   Delay: ['Delay_Icon.png', STATUS],
-   Evasive: ['Evasive_icon.png', OFFENSE],
-   Exposed: ['Exposed_icon.png', STATUS],
-   Overpower: ['Overpower_icon.png', OFFENSE],
-   Rejuvenate: ['Rejuvenate_icon.png', DRAIN],
-   Siphon: ['Siphon_icon.png', DRAIN],
-   Temporary: ['Temporary_icon.png', STATUS],
-   Transient: ['Transient_icon.png', STATUS],
-   Fervor: ['Fervor_Icon.png', OFFENSE],
+   Blitz: ['Blitz_icon.webp', OFFENSE],
+   Cleave: ['Cleave_icon.webp', OFFENSE],
+   Confront: ['Confront_icon.webp', OFFENSE],
+   Delay: ['Delay_Icon.webp', STATUS],
+   Evasive: ['Evasive_icon.webp', OFFENSE],
+   Exposed: ['Exposed_icon.webp', STATUS],
+   Overpower: ['Overpower_icon.webp', OFFENSE],
+   Rejuvenate: ['Rejuvenate_icon.webp', DRAIN],
+   Siphon: ['Siphon_icon.webp', DRAIN],
+   Temporary: ['Temporary_icon.webp', STATUS],
+   Transient: ['Transient_icon.webp', STATUS],
+   Fervor: ['Fervor_Icon.webp', OFFENSE],
 };
 
 export function keywordIcon(name) {
@@ -77,29 +77,29 @@ export function loadAssets() {
 
 async function load() {
    const names = [
-      'CardFrame_Base.png',
-      'CardFrame_Immortal.png',
-      'CardFrame_Token.png',
-      'CardFrame_Action.png',
-      'CardFrameWindow_Base.png',
-      'CardFrameWindow_Immortal.png',
-      'CardFrameWindow_Token.png',
-      'CardFrameWindow_Action.png',
-      'NewCardArtMask.png',
-      'CardArtInnerGlow.png',
-      'ArtOutlineLine.png',
-      'CardDigitGlow.png',
-      'Card_Text_mask.png',
-      'CardTextBackground.png',
-      'ImmortalHeader_Shadow.png',
-      'Union.png',
-      'ImmortalHeader_Outline.png',
-      'KeywordPill.png',
-      'Rarities.png',
-      'Syndicates.png',
-      'Syndicates_Immortal.png',
-      'Actions.png',
-      'CC.png',
+      'CardFrame_Base.webp',
+      'CardFrame_Immortal.webp',
+      'CardFrame_Token.webp',
+      'CardFrame_Action.webp',
+      'CardFrameWindow_Base.webp',
+      'CardFrameWindow_Immortal.webp',
+      'CardFrameWindow_Token.webp',
+      'CardFrameWindow_Action.webp',
+      'NewCardArtMask.webp',
+      'CardArtInnerGlow.webp',
+      'ArtOutlineLine.webp',
+      'CardDigitGlow.webp',
+      'Card_Text_mask.webp',
+      'CardTextBackground.webp',
+      'ImmortalHeader_Shadow.webp',
+      'Union.webp',
+      'ImmortalHeader_Outline.webp',
+      'KeywordPill.webp',
+      'Rarities.webp',
+      'Syndicates.webp',
+      'Syndicates_Immortal.webp',
+      'Actions.webp',
+      'CC.webp',
       ...Object.values(KEYWORD_ICONS).map(([file]) => file),
    ];
 
@@ -109,37 +109,37 @@ async function load() {
    ]);
    const img = Object.fromEntries(names.map((name, i) => [name, images[i]]));
 
-   const rarities = img['Rarities.png'];
+   const rarities = img['Rarities.webp'];
    const rarity = (bottom) => unitySprite(rarities, 28, bottom, 220, 152);
-   const syndicates = img['Syndicates.png'];
+   const syndicates = img['Syndicates.webp'];
    const syndicate = (bottom) => unitySprite(syndicates, 28, bottom, 150, 206);
-   const immortals = img['Syndicates_Immortal.png'];
+   const immortals = img['Syndicates_Immortal.webp'];
    const immortal = (bottom) => unitySprite(immortals, 52, bottom, 116, 300);
-   const actions = img['Actions.png'];
+   const actions = img['Actions.webp'];
 
    return {
       frames: {
-         base: sprite(img['CardFrame_Base.png']),
-         immortal: sprite(img['CardFrame_Immortal.png']),
-         token: sprite(img['CardFrame_Token.png']),
-         action: sprite(img['CardFrame_Action.png']),
+         base: sprite(img['CardFrame_Base.webp']),
+         immortal: sprite(img['CardFrame_Immortal.webp']),
+         token: sprite(img['CardFrame_Token.webp']),
+         action: sprite(img['CardFrame_Action.webp']),
       },
       frameWindows: {
-         base: sprite(img['CardFrameWindow_Base.png']),
-         immortal: sprite(img['CardFrameWindow_Immortal.png']),
-         token: sprite(img['CardFrameWindow_Token.png']),
-         action: sprite(img['CardFrameWindow_Action.png']),
+         base: sprite(img['CardFrameWindow_Base.webp']),
+         immortal: sprite(img['CardFrameWindow_Immortal.webp']),
+         token: sprite(img['CardFrameWindow_Token.webp']),
+         action: sprite(img['CardFrameWindow_Action.webp']),
       },
-      artMask: sprite(img['NewCardArtMask.png']),
-      artInnerGlow: sprite(img['CardArtInnerGlow.png']),
-      artOutline: sprite(img['ArtOutlineLine.png']),
-      digitGlow: sprite(img['CardDigitGlow.png']),
-      textMask: sprite(img['Card_Text_mask.png']),
-      textBackground: sprite(img['CardTextBackground.png']),
-      immortalizeTagShadow: sprite(img['ImmortalHeader_Shadow.png']),
-      immortalizeTagFill: sprite(img['Union.png']),
-      immortalizeTagOutline: sprite(img['ImmortalHeader_Outline.png']),
-      keywordPill: sprite(img['KeywordPill.png']),
+      artMask: sprite(img['NewCardArtMask.webp']),
+      artInnerGlow: sprite(img['CardArtInnerGlow.webp']),
+      artOutline: sprite(img['ArtOutlineLine.webp']),
+      digitGlow: sprite(img['CardDigitGlow.webp']),
+      textMask: sprite(img['Card_Text_mask.webp']),
+      textBackground: sprite(img['CardTextBackground.webp']),
+      immortalizeTagShadow: sprite(img['ImmortalHeader_Shadow.webp']),
+      immortalizeTagFill: sprite(img['Union.webp']),
+      immortalizeTagOutline: sprite(img['ImmortalHeader_Outline.webp']),
+      keywordPill: sprite(img['KeywordPill.webp']),
       keywordIcons: Object.fromEntries(
          Object.entries(KEYWORD_ICONS).map(([key, [file, color]]) => [
             key,
@@ -166,6 +166,6 @@ async function load() {
          immediate: unitySprite(actions, 33, 252, 128, 137),
          slow: unitySprite(actions, 33, 48, 128, 137),
       },
-      inlineSprites: { CC: sprite(img['CC.png']) },
+      inlineSprites: { CC: sprite(img['CC.webp']) },
    };
 }
