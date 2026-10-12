@@ -1,14 +1,21 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { useModal } from 'vue-final-modal';
 import { useCardStore } from '@/stores/card.store';
 import * as CreatorTypes from '@/constants/creatorTypes';
 import { BaseSelect } from '../common';
 import EditBarCards from './EditBarCards.vue';
 import EditBarShowcases from './EditBarShowcases.vue';
 import EditBarCollection from './EditBarCollection.vue';
+import LoadCardModal from './LoadCardModal.vue';
 
 const isMobileLow = ref(true);
 const cardStore = useCardStore();
+
+const { open: openLoadCard, close: closeLoadCard } = useModal({
+   component: LoadCardModal,
+   attrs: { onClose: () => closeLoadCard() },
+});
 
 const isCards = computed(() => CreatorTypes.Cards.includes(cardStore.cardType));
 const isShowcase = computed(() => CreatorTypes.Showcases.includes(cardStore.cardType));
@@ -32,6 +39,10 @@ const isCollection = computed(() => cardStore.cardType === CreatorTypes.COLLECTI
             {{ cType }}
          </option>
       </BaseSelect>
+
+      <button type="button" class="load-card-btn" @click="openLoadCard">
+         Load existing card
+      </button>
 
       <EditBarCards v-if="isCards" />
       <template v-else-if="isShowcase">
@@ -128,6 +139,23 @@ const isCollection = computed(() => cardStore.cardType === CreatorTypes.COLLECTI
 
    .top-select {
       margin-bottom: 10px;
+   }
+
+   .load-card-btn {
+      flex-shrink: 0;
+      height: 34px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      cursor: pointer;
+
+      &:hover {
+         background: rgba(255, 255, 255, 0.1);
+         color: white;
+      }
    }
 }
 </style>

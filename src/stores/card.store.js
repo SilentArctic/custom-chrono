@@ -54,14 +54,17 @@ export const useCardStore = defineStore('card', {
          this.cards = [createCard(), createCard()];
       },
 
-      setFromParams(params) {
-         if (!params.size) return;
-
-         const { cardType, syndicate, rarity, cards } = parseCardParams(params);
+      setState({ cardType, syndicate, rarity, cards }) {
          this.cardType = cardType;
          this.syndicate = syndicate;
          this.rarity = rarity;
          this.cards = cards;
+      },
+
+      setFromParams(params) {
+         if (!params.size) return;
+
+         this.setState(parseCardParams(params));
 
          /* clear url to prevent confusion (live changes are not reflected in url) */
          window.history.replaceState(
